@@ -8,7 +8,7 @@
   top: 24px;
   cursor: pointer;
   z-index: 100;
-  @media only screen and(max-width: 1080px) {
+  @media only screen and (max-width: 1080px) {
     left: inherit;
     right: 30px;
     top: 100px;
@@ -232,7 +232,7 @@ ul.menu {
     @include display-flex();
   }
   span {
-    @media only screen and(min-width: 768px) {
+    @media only screen and (min-width: 768px) {
       display: none;
     }
     @media only screen and (max-width: 767px) {
@@ -432,7 +432,7 @@ ul.menu {
   overflow-y: auto;
   @include translate(-100%, 0);
   @include transition(transform .5s);
-  @media only screen and(min-width: 768px) {
+  @media only screen and (min-width: 768px) {
     display: none !important;
   }
   .navbar-brand {

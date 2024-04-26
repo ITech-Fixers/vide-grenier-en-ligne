@@ -52,7 +52,7 @@ footer {
     font-size: $fs-lg;
     color: $c-icon;
     padding-left: 15px;
-    @media only screen and(min-width: 768px) {
+    @media only screen and (min-width: 768px) {
       padding-top: 35px;
     }
     a {
@@ -65,7 +65,7 @@ footer {
   }
 
   .f-lang {
-    @media only screen and(min-width: 768px) {
+    @media only screen and (min-width: 768px) {
       padding-top: 30px;
     }
     .btn-default {

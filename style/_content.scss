@@ -198,7 +198,7 @@
     font-size: $fs-defs;
     color: $c-light;
     padding-top: 5px;
-    @media only screen and(min-width: 768px) {
+    @media only screen and (min-width: 768px) {
       padding-bottom: 30px;
     }
     .v-percent {
@@ -233,7 +233,7 @@
   }
   .h-article {
     [class^='col-']:last-child {
-      @media only screen and(min-width: 768px) {
+      @media only screen and (min-width: 768px) {
         margin-top: 25px;
       }
       @media only screen and (max-width: 767px) {
@@ -464,13 +464,13 @@
         width: 100%;
       }
       .v-views {
-        @media only screen and(min-width: 768px) {
+        @media only screen and (min-width: 768px) {
           padding-bottom: 30px;
         }
       }
       .last-row {
         .v-views {
-          @media only screen and(min-width: 768px) {
+          @media only screen and (min-width: 768px) {
             padding-bottom: 30px;
           }
         }
@@ -527,7 +527,7 @@
 
 .single-v-footer {
   & > *:not(.single-v-footer-switch) {
-    @media only screen and(min-width: 768px) {
+    @media only screen and (min-width: 768px) {
       display: block !important;
     }
     @media only screen and (max-width: 767px) {
@@ -537,7 +537,7 @@
   &-switch {
     margin-bottom: 30px;
     @include display-flex();
-    @media only screen and(min-width: 768px) {
+    @media only screen and (min-width: 768px) {
       display: none;
     }
     & > a {
