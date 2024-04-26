@@ -45,19 +45,19 @@ RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN mkdir -p /var/www/html
 
 # Cloner le dépôt de l'application dans /var/www/html
-RUN git clone -b setup-dev-env git@github.com:ITech-Fixers/vide-grenier-en-ligne.git /var/www/html/
+RUN git clone -b setup-dev-env git@github.com:ITech-Fixers/vide-grenier-en-ligne.git /var/www/html
 
 # Installer les dépendances de l'application
-RUN cd /var/www/html/ && composer install && npm install
+RUN cd /var/www/html && composer install && npm install
 
 # Changer le propriétaire des fichiers de l'application
-RUN chown -R www-data:www-data /var/www/html/
+RUN chown -R www-data:www-data /var/www/html
 
 # Changer les permissions des fichiers de l'application
-RUN chmod -R 755 /var/www/html/
+RUN chmod -R 755 /var/www/html
 
 # Compiler les assets
-RUN cd /var/www/html/ && npm run watch
+RUN cd /var/www/html && npm run watch
 
 # Exposer le port 80
 EXPOSE 80
