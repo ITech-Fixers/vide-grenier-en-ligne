@@ -1,10 +1,10 @@
 # Utiliser l'image officielle de PHP avec Apache
 FROM php:8.3-apache
 
-# allow composer super user
+# Paramétrer les variables d'environnement pour Composer
 ENV COMPOSER_ALLOW_SUPERUSER 1
 
-# Mettre à jour la liste des paquets et installer les dépendances nécessaires
+# Mettre à jour la liste des paquets et installer les dépendances infra
 RUN apt-get update && \
     apt-get install -y git && \
     apt-get install -y unzip && \
@@ -18,13 +18,17 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && php -r "unlink('composer-setup.php');"
 
+# Installer Node.js
+RUN curl -sL https://deb.nodesource.com/setup_21.x | bash -
+RUN apt-get install -y nodejs
+
 # Activer le mod_rewrite pour Apache
 RUN a2enmod rewrite
 
-# Copier les fichiers de configuration Apache si nécessaire
+# Copier le fichier de configuration d'Apache
 COPY deploy/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Générer un clef ssh pour github
+# Créer le répertoire pour les clefs ssh
 RUN mkdir /root/.ssh
 
 # Copier la clef ssh dans le conteneur
@@ -33,7 +37,7 @@ COPY deploy/ssh-keys/id_test_deploy /root/.ssh/id_rsa
 # Changer les permissions de la clef ssh
 RUN chmod 600 /root/.ssh/id_rsa
 
-# Ajouter la clef ssh à la liste des clefs connues
+# Ajouter github.com dans les known_hosts
 RUN touch /root/.ssh/known_hosts
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 
