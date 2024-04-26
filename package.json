@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "sass -w style -o public/style",
+    "watch": "sass style/main.scss public/style/main.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
