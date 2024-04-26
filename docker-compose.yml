@@ -10,7 +10,7 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
     volumes:
-      - .:/var/www
+      - .:/var/www/html
     links:
       - db
   db:
