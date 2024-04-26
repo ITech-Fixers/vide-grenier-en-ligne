@@ -41,6 +41,9 @@ RUN chmod 600 /root/.ssh/id_rsa
 RUN touch /root/.ssh/known_hosts
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 
+# Créer le répertoire de l'application si nécessaire
+RUN mkdir -p /var/www/html
+
 # Cloner le dépôt de l'application dans /var/www/html
 RUN git clone -b setup-dev-env git@github.com:ITech-Fixers/vide-grenier-en-ligne.git /var/www/html
 
