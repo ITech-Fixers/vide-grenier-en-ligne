@@ -46,3 +46,13 @@ Les modèles sont utilisés pour récupérer ou stocker des données dans l'appl
 ```php
 $db = static::getDB();
 ```
+
+## Environment de développement
+
+Pour monter un environnement de développement, vous pouvez utiliser **Docker**. 
+
+```bash
+docker-compose up
+```
+
+Puis accéder à l'application via `http://localhost:8080`.
