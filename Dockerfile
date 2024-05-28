@@ -59,8 +59,11 @@ RUN chown -R www-data:www-data /var/www/html
 # Changer les permissions des fichiers de l'application
 RUN chmod -R 755 /var/www/html
 
-# Compiler les assets
-RUN cd /var/www/html && npm run watch
+# Exposer le répertoire de l'application
+VOLUME /var/www/html
+
+# Définir le répertoire de travail
+WORKDIR /var/www/html
 
 # Exposer le port 80
 EXPOSE 80
