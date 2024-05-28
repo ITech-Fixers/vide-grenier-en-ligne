@@ -11,10 +11,11 @@
 
 .login-wraper{
   position: relative;
+  height: 100vh;
   .login-window {
     position: absolute;
     width: 570px;
-    top: 50%;
+    top: 40%;
     left: 50%;
     margin-left: -2px;
     margin-top: -288px;
@@ -92,7 +93,7 @@
 
 .banner-text {
   position: absolute;
-  top: 50%;
+  top: 30rem;
   left: 50%;
   margin-top: -50px;
   margin-left: -580px;
