@@ -32,10 +32,10 @@ COPY deploy/apache/000-default.conf /etc/apache2/sites-available/000-default.con
 RUN mkdir /root/.ssh
 
 # Copier la clef ssh dans le conteneur
-COPY deploy/ssh-keys/id_test_deploy /root/.ssh/id_rsa
+# COPY deploy/ssh-keys/id_test_deploy /root/.ssh/id_rsa
 
 # Changer les permissions de la clef ssh
-RUN chmod 600 /root/.ssh/id_rsa
+# RUN chmod 600 /root/.ssh/id_rsa
 
 # Ajouter github.com dans les known_hosts
 RUN touch /root/.ssh/known_hosts
@@ -45,7 +45,10 @@ RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN mkdir -p /var/www/html
 
 # Cloner le dépôt de l'application dans /var/www/html
-RUN git clone git@github.com:ITech-Fixers/vide-grenier-en-ligne.git /var/www/html
+#RUN git clone git@github.com:ITech-Fixers/vide-grenier-en-ligne.git /var/www/html
+
+# Copier les fichiers de l'application dans /var/www/html
+COPY . /var/www/html
 
 # Installer les dépendances de l'application
 RUN cd /var/www/html && composer install && npm install
