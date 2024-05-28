@@ -45,7 +45,7 @@ RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
 RUN mkdir -p /var/www/html
 
 # Cloner le dépôt de l'application dans /var/www/html
-RUN git clone git@github.com:ITech-Fixers/vide-grenier-en-ligne.git /var/www/html
+RUN git clone https://github.com/ITech-Fixers/vide-grenier-en-ligne.git /var/www/html
 
 # Installer les dépendances de l'application
 RUN cd /var/www/html && composer install && npm install
