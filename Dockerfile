@@ -11,6 +11,10 @@ RUN apt-get update && \
     apt-get install -y libzip-dev && \
     apt-get install -y nano && \
     apt-get clean && \
+    docker-php-ext-install pdo_mysql && \
+    docker-php-ext-install zip && \
+    docker-php-ext-install mysqli && \
+    docker-php-ext-install pdo && \
     rm -rf /var/lib/apt/lists/*
 
 # Installer Composer
