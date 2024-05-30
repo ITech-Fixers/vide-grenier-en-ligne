@@ -10,6 +10,7 @@ use Core\Controller;
 use Core\View;
 use ErrorException;
 use Exception;
+use Random\RandomException;
 
 /**
  * User controller
@@ -17,6 +18,10 @@ use Exception;
 class User extends Controller
 {
 
+    public function __construct($route_params)
+    {
+        parent::__construct($route_params);
+    }
     /**
      * Affiche la page de login
      * @throws Exception
@@ -34,7 +39,6 @@ class User extends Controller
 
             $this->login($request);
 
-            // Si login OK, redirige vers le compte
             header('Location: /account');
         }
 
@@ -60,6 +64,7 @@ class User extends Controller
 
             $this->register($request);
             $this->login($request);
+
             View::renderTemplate('User/account.html');
             return;
         }
@@ -113,18 +118,22 @@ class User extends Controller
 
             $user = \App\Models\User::getByLogin($data['email']);
 
-            if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
-                return;
+            if (!$user) {
+                throw new Exception('Utilisateur non trouvé');
             }
 
-            // TODO: Create a remember me cookie if the user has selected the option
-            // to remained logged in on the login form.
-            // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L86
+            if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
+                throw new Exception('Mot de passe incorrect');
+            }
 
             $_SESSION['user'] = array(
                 'id' => $user['id'],
                 'username' => $user['username'],
             );
+
+            if (isset($data['remember-me'])) {
+                $this->createRememberMeToken($user['id']);
+            }
 
             return;
 
@@ -144,12 +153,12 @@ class User extends Controller
     public function logoutAction(): bool
     {
 
-        /*
-        if (isset($_COOKIE[$cookie])){
-            // TODO: Delete the users remember me cookie if one has been stored.
-            // https://github.com/andrewdyer/php-mvc-register-login/blob/development/www/app/Model/UserLogin.php#L148
-        }*/
-        // Destroy all data registered to the session.
+        if (isset($_COOKIE['remember_me'])) {
+            $token = $_COOKIE['remember_me'];
+            \App\Models\User::deleteRememberMeToken($token);
+
+            setcookie('remember_me', '', time() - 3600, "/");
+        }
 
         $_SESSION = array();
 
@@ -166,5 +175,20 @@ class User extends Controller
         header ("Location: /");
 
         return true;
+    }
+
+    /**
+     * @throws RandomException
+     */
+    private function createRememberMeToken(int $userId): void
+    {
+        $token = bin2hex(random_bytes(32));
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+30 days'));
+
+        // Insérer le token dans la base de données
+        \App\Models\User::storeRememberMeToken($userId, $token, $expiresAt);
+
+        // Créer le cookie avec une durée de vie de 30 jours
+        setcookie('remember_me', $token, time() + (86400 * 30), "/", "", false, true);
     }
 }
