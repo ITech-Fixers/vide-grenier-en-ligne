@@ -37,9 +37,12 @@ class User extends Controller
                 return;
             }
 
-            $this->login($request);
+            $login = $this->login($request);
 
-            header('Location: /account');
+            if ($login) {
+                View::renderTemplate('User/account.html');
+                return;
+            }
         }
 
         View::renderTemplate('User/login.html');
@@ -62,11 +65,13 @@ class User extends Controller
                 return;
             }
 
-            $this->register($request);
-            $this->login($request);
+            $register = $this->register($request);
 
-            View::renderTemplate('User/account.html');
-            return;
+            if ($register) {
+                $this->login($request);
+                View::renderTemplate('User/account.html');
+                return;
+            }
         }
 
         View::renderTemplate('User/register.html');
@@ -88,7 +93,7 @@ class User extends Controller
     /*
      * Fonction privée pour enregistrer un utilisateur
      */
-    private function register($data): void
+    private function register($data): bool
     {
         try {
             // Generate a salt, which will be applied to the during the password
@@ -102,14 +107,15 @@ class User extends Controller
                 "salt" => $salt
             ]);
 
-            return;
+            return true;
 
         } catch (Exception $ex) {
             Flash::danger($ex->getMessage());
+            return false;
         }
     }
 
-    private function login($data): void
+    private function login($data): bool
     {
         try {
             if(!isset($data['email'])){
@@ -135,10 +141,11 @@ class User extends Controller
                 $this->createRememberMeToken($user['id']);
             }
 
-            return;
+            return true;
 
         } catch (Exception $ex) {
             Flash::danger($ex->getMessage());
+            return false;
         }
     }
 
