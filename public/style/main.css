@@ -1316,7 +1316,7 @@ video {
 }
 
 .cb-content {
-  width: 130% !important;
+  width: 100%;
 }
 
 /*
@@ -2129,12 +2129,15 @@ footer .f-lang .btn-default {
 }
 
 .banner-text {
+  border-radius: 20px;
   position: absolute;
-  top: 30rem;
+  top: 16rem;
+  padding: 50px;
   left: 50%;
   margin-top: -50px;
   margin-left: -580px;
   width: 550px;
+  backdrop-filter: grayscale(1) blur(8px);
 }
 .banner-text .line {
   height: 1px;
@@ -2144,7 +2147,7 @@ footer .f-lang .btn-default {
 }
 .banner-text .b-text {
   color: #ffffff;
-  font-size: 80px;
+  font-size: 45px;
   text-align: left;
   line-height: 80px;
 }
@@ -2202,6 +2205,12 @@ footer .f-lang .btn-default {
     padding: 25px 20px;
   }
 }
+.login-wraper {
+  background-image: url("/images/login-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 /*
 * Content Account END
 */
