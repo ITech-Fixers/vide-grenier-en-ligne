@@ -2,6 +2,9 @@
 
 namespace Core;
 
+use App\Models\User;
+use Exception;
+
 /**
  * Base controller
  *
@@ -23,7 +26,7 @@ abstract class Controller
      *
      * @return void
      */
-    public function __construct($route_params)
+    public function __construct(array $route_params)
     {
         $this->route_params = $route_params;
     }
@@ -34,10 +37,11 @@ abstract class Controller
      * filter methods on action methods. Action methods need to be named
      * with an "Action" suffix, e.g. indexAction, showAction etc.
      *
-     * @param string $name  Method name
+     * @param string $name Method name
      * @param array $args Arguments passed to the method
      *
      * @return void
+     * @throws Exception
      */
     public function __call($name, $args)
     {
@@ -49,7 +53,7 @@ abstract class Controller
                 $this->after();
             }
         } else {
-            throw new \Exception("Method $method not found in controller " . get_class($this));
+            throw new Exception("Method $method not found in controller " . get_class($this));
         }
     }
 
@@ -58,8 +62,9 @@ abstract class Controller
      *
      * @return void
      */
-    protected function before()
+    protected function before(): void
     {
+        $this->checkRememberMe();
     }
 
     /**
@@ -69,5 +74,18 @@ abstract class Controller
      */
     protected function after()
     {
+    }
+
+    protected function checkRememberMe(): void
+    {
+        if (isset($_COOKIE['remember_me']) && !isset($_SESSION['user'])) {
+            $user = User::getUserByRememberMeToken($_COOKIE['remember_me']);
+            if ($user) {
+                $_SESSION['user'] = array(
+                    'id' => $user['id'],
+                    'username' => $user['username'],
+                );
+            }
+        }
     }
 }

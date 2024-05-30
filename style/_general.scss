@@ -56,9 +56,9 @@ $fs-xl: 80px;
 
 $space-def: 70px;
 $space-med: 40px;
-$space-sm:  30px;
-$space-sms:  25px;
-$space-smm:  23px;
+$space-sm: 30px;
+$space-sms: 25px;
+$space-smm: 23px;
 $space-smmm: 20px;
 $space-xs: 15px;
 
@@ -75,6 +75,7 @@ body {
 
 body.light {
   background-color: $c-white;
+
   .content-wrapper {
     background-color: $c-bg;
   }
@@ -82,6 +83,7 @@ body.light {
 
 body.dark {
   background-color: $c-bg-dark;
+
   .content-wrapper {
     background-color: $c-bg-dark-content;
   }
@@ -95,10 +97,12 @@ body.dark {
 
 a {
   color: $c-default;
+
   &:hover {
     color: $c-active;
     text-decoration: none;
   }
+
   &:focus {
     color: $c-active;
   }
@@ -107,6 +111,7 @@ a {
 .form-control, .btn {
   font-size: $fs-def;
 }
+
 .form-control {
   border-radius: 3px;
   border: solid 1px $c-from-b;
@@ -125,6 +130,7 @@ label {
 .color-default {
   color: $c-default;
 }
+
 .color-active {
   color: $c-active;
 }
@@ -167,7 +173,7 @@ label {
 .btn-default.active,
 .btn-default:focus,
 .btn-default.focus,
-.open>.dropdown-toggle.btn-default {
+.open > .dropdown-toggle.btn-default {
   color: $c-icon;
   background-color: transparent;
   border-color: transparent;
@@ -175,19 +181,19 @@ label {
 
 .btn-default:active:hover,
 .btn-default.active:hover,
-.open>.dropdown-toggle.btn-default:hover,
+.open > .dropdown-toggle.btn-default:hover,
 .btn-default:active:focus,
 .btn-default.active:focus,
-.open>.dropdown-toggle.btn-default:focus,
+.open > .dropdown-toggle.btn-default:focus,
 .btn-default:active.focus,
 .btn-default.active.focus,
-.open>.dropdown-toggle.btn-default.focus {
+.open > .dropdown-toggle.btn-default.focus {
   color: $c-icon;
   background-color: transparent;
   border-color: transparent;
 }
 
-.pull-right>.dropdown-menu {
+.pull-right > .dropdown-menu {
   right: -1px;
 }
 
@@ -198,18 +204,23 @@ ul.dropdown-menu {
   box-shadow: none;
   padding: 0;
   margin: 0;
+
   li {
     a {
       padding: 14px 16px;
+
       i {
         padding-right: 5px;
         font-size: 19px;
       }
     }
+
     border-bottom: solid 1px $c-divider;
+
     &:last-child {
       border: none;
     }
+
     &:nth-child(even) {
       background-color: $c-bg;
     }
@@ -248,12 +259,19 @@ a.active {
   font-weight: 500;
   padding: 20px;
   width: 100%;
+
   &:hover {
     color: $c-active;
     background-color: $c-white;
   }
 }
 
+.toast-list {
+  top: 75px;
+  right: 20px;
+  width: 500px;
+  position: absolute;
+}
 
 /*
 * General Styles END

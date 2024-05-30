@@ -188,6 +188,13 @@ a.active {
   background-color: #ffffff;
 }
 
+.toast-list {
+  top: 75px;
+  right: 20px;
+  width: 500px;
+  position: absolute;
+}
+
 /*
 * General Styles END
 */

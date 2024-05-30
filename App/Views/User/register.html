@@ -23,11 +23,6 @@
                 <div class="l-head">
                     Créer un compte
                 </div>
-                {% if flash is defined and flash.danger is defined %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ flash.danger.message|raw }}
-                    </div>
-                {% endif %}
                 <div class="l-form">
                     <form method="post" action="/register">
                         <div class="form-group">
