@@ -2,33 +2,37 @@
 
 namespace App\Controllers;
 
-use App\Config;
-use App\Model\UserRegister;
+use App\Models\UserRegister;
 use App\Models\Articles;
+use App\Utility\Flash;
 use App\Utility\Hash;
-use App\Utility\Session;
-use \Core\View;
+use Core\Controller;
+use Core\View;
+use ErrorException;
 use Exception;
-use http\Env\Request;
-use http\Exception\InvalidArgumentException;
 
 /**
  * User controller
  */
-class User extends \Core\Controller
+class User extends Controller
 {
 
     /**
      * Affiche la page de login
+     * @throws Exception
      */
-    public function loginAction()
+    public function loginAction(): void
     {
         if(isset($_POST['submit'])){
-            $f = $_POST;
+            $request = $_POST;
 
-            // TODO: Validation
+            if (!isset($request['email']) || !isset($request['password'])){
+                Flash::danger('Veuillez renseigner un email et un mot de passe');
+                View::renderTemplate('User/login.html');
+                return;
+            }
 
-            $this->login($f);
+            $this->login($request);
 
             // Si login OK, redirige vers le compte
             header('Location: /account');
@@ -39,20 +43,25 @@ class User extends \Core\Controller
 
     /**
      * Page de création de compte
+     * @throws ErrorException
+     * @throws Exception
      */
-    public function registerAction()
+    public function registerAction(): void
     {
         if(isset($_POST['submit'])){
-            $f = $_POST;
+            $request = $_POST;
+            $errors = UserRegister::validate($request);
 
-            if($f['password'] !== $f['password-check']){
-                // TODO: Gestion d'erreur côté utilisateur
+            if (!empty($errors)){
+                Flash::danger(implode('<br>', $errors));
+                View::renderTemplate('User/register.html');
+                return;
             }
 
-            // validation
-
-            $this->register($f);
-            // TODO: Rappeler la fonction de login pour connecter l'utilisateur
+            $this->register($request);
+            $this->login($request);
+            View::renderTemplate('User/account.html');
+            return;
         }
 
         View::renderTemplate('User/register.html');
@@ -60,8 +69,9 @@ class User extends \Core\Controller
 
     /**
      * Affiche la page du compte
+     * @throws Exception
      */
-    public function accountAction()
+    public function accountAction(): void
     {
         $articles = Articles::getByUser($_SESSION['user']['id']);
 
@@ -71,40 +81,40 @@ class User extends \Core\Controller
     }
 
     /*
-     * Fonction privée pour enregister un utilisateur
+     * Fonction privée pour enregistrer un utilisateur
      */
-    private function register($data)
+    private function register($data): void
     {
         try {
             // Generate a salt, which will be applied to the during the password
             // hashing process.
             $salt = Hash::generateSalt(32);
 
-            $userID = \App\Models\User::createUser([
+            \App\Models\User::createUser([
                 "email" => $data['email'],
                 "username" => $data['username'],
                 "password" => Hash::generate($data['password'], $salt),
                 "salt" => $salt
             ]);
 
-            return $userID;
+            return;
 
         } catch (Exception $ex) {
-            // TODO : Set flash if error : utiliser la fonction en dessous
-            /* Utility\Flash::danger($ex->getMessage());*/
+            Flash::danger($ex->getMessage());
         }
     }
 
-    private function login($data){
+    private function login($data): void
+    {
         try {
             if(!isset($data['email'])){
-                throw new Exception('TODO');
+                throw new Exception('Veuillez renseigner un email');
             }
 
             $user = \App\Models\User::getByLogin($data['email']);
 
             if (Hash::generate($data['password'], $user['salt']) !== $user['password']) {
-                return false;
+                return;
             }
 
             // TODO: Create a remember me cookie if the user has selected the option
@@ -116,11 +126,10 @@ class User extends \Core\Controller
                 'username' => $user['username'],
             );
 
-            return true;
+            return;
 
         } catch (Exception $ex) {
-            // TODO : Set flash if error
-            /* Utility\Flash::danger($ex->getMessage());*/
+            Flash::danger($ex->getMessage());
         }
     }
 
@@ -132,7 +141,8 @@ class User extends \Core\Controller
      * @return boolean
      * @since 1.0.2
      */
-    public function logoutAction() {
+    public function logoutAction(): bool
+    {
 
         /*
         if (isset($_COOKIE[$cookie])){
@@ -157,5 +167,4 @@ class User extends \Core\Controller
 
         return true;
     }
-
 }
