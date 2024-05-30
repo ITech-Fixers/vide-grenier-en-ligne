@@ -8,8 +8,8 @@ class UserRegister
     {
         $errors = [];
 
-        if ($data['password'] !== $data['password-check']) {
-            $errors[] = 'Les mots de passe ne correspondent pas';
+        if (empty($data['password']) || empty($data['password-check'])) {
+            $errors[] = 'Le mot de passe ne peut pas être vide';
         }
 
         if (empty($data['username'])) {
@@ -20,16 +20,16 @@ class UserRegister
             $errors[] = 'L\'email ne peut pas être vide';
         }
 
-        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'L\'email n\'est pas valide';
-        }
-
-        if (empty($data['password'])) {
-            $errors[] = 'Le mot de passe ne peut pas être vide';
+        if ($data['password'] !== $data['password-check']) {
+            $errors[] = 'Les mots de passe ne correspondent pas';
         }
 
         if (strlen($data['password']) < 6) {
             $errors[] = 'Le mot de passe doit contenir au moins 6 caractères';
+        }
+
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'L\'email n\'est pas valide';
         }
 
         return $errors;
