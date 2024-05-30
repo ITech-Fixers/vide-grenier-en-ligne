@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use App\Utility\Hash;
 use Core\Model;
-use App\Core;
 use Exception;
-use App\Utility;
 
 /**
  * User Model:
@@ -16,7 +13,8 @@ class User extends Model {
     /**
      * Crée un utilisateur
      */
-    public static function createUser($data) {
+    public static function createUser($data): false|string
+    {
         $db = static::getDB();
 
         $stmt = $db->prepare('INSERT INTO users(username, email, password, salt) VALUES (:username, :email, :password,:salt)');
@@ -49,10 +47,11 @@ class User extends Model {
     /**
      * ?
      * @access public
-     * @return string|boolean
+     * @return array|false
      * @throws Exception
      */
-    public static function login() {
+    public static function login(): false|array
+    {
         $db = static::getDB();
 
         $stmt = $db->prepare('SELECT * FROM articles WHERE articles.id = ? LIMIT 1');
@@ -61,6 +60,4 @@ class User extends Model {
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-
-
 }
