@@ -92,12 +92,15 @@
 }
 
 .banner-text {
+  border-radius: 20px;
   position: absolute;
-  top: 30rem;
+  top: 16rem;
+  padding: 50px;
   left: 50%;
   margin-top: -50px;
   margin-left: -580px;
   width: 550px;
+  backdrop-filter: grayscale(1) blur(8px);
   .line {
     height: 1px;
     border-top: solid 1px $c-active;
@@ -106,7 +109,7 @@
   }
   .b-text {
     color: $c-white;
-    font-size: $fs-xl;
+    font-size: 45px;
     text-align: left;
     line-height: $fs-xl;
     .color-b1 {
@@ -175,6 +178,13 @@
 
 
 }
+
+.login-wraper {
+  background-image: url("/images/login-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 /*
 * Content Account END
 */
