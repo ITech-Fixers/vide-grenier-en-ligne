@@ -2,51 +2,72 @@
 
 namespace App\Controllers;
 
+use App\Exception\CityNotFoundException;
+use App\Exception\ValidationException;
+use App\Models\ArticleAdd;
 use App\Models\Articles;
+use App\Models\Cities;
+use App\Utility\Flash;
 use App\Utility\Upload;
-use \Core\View;
+use Core\Controller;
+use Core\View;
+use Exception;
 
 /**
  * Product controller
  */
-class Product extends \Core\Controller
+class Product extends Controller
 {
-
     /**
-     * Affiche la page d'ajout
+     * Affiche la page d'ajout d'un produit
      * @return void
+     * @throws Exception
      */
-    public function indexAction()
+    public function indexAction(): void
     {
-
         if(isset($_POST['submit'])) {
-
             try {
-                $f = $_POST;
+                $request = $_POST;
+                $errors = ArticleAdd::validate($request);
 
-                // TODO: Validation
+                if (!empty($errors)) {
+                    throw new ValidationException(implode('<br>', $errors));
+                }
 
-                $f['user_id'] = $_SESSION['user']['id'];
-                $id = Articles::save($f);
+                $city = Cities::getById($request['city_id']);
+
+                if (empty($city)) {
+                    throw new CityNotFoundException('La ville sélectionnée n\'existe pas');
+                }
+
+                $request['user_id'] = $_SESSION['user']['id'];
+                $id = Articles::save($request);
 
                 $pictureName = Upload::uploadFile($_FILES['picture'], $id);
 
                 Articles::attachPicture($id, $pictureName);
 
-                header('Location: /product/' . $id);
-            } catch (\Exception $e){
-                    var_dump($e);
+                Flash::success('Produit ajouté avec succès');
+                $this->route_params['id'] = $id;
+                $this->showAction();
+            } catch (ValidationException|CityNotFoundException $e) {
+                Flash::danger($e->getMessage());
+                View::renderTemplate('Product/Add.html');
+            } catch (Exception) {
+                Flash::danger('Une erreur est survenue, veuillez réessayer');
+                View::renderTemplate('Product/Add.html');
             }
+        } else {
+            View::renderTemplate('Product/Add.html');
         }
-
-        View::renderTemplate('Product/Add.html');
     }
 
     /**
      * Affiche la page d'un produit
      * @return void
+     * @throws Exception
      */
-    public function showAction()
+    public function showAction(): void
     {
         $id = $this->route_params['id'];
 
@@ -54,13 +75,14 @@ class Product extends \Core\Controller
             Articles::addOneView($id);
             $suggestions = Articles::getSuggest();
             $article = Articles::getOne($id);
-        } catch(\Exception $e){
-            var_dump($e);
-        }
 
-        View::renderTemplate('Product/Show.html', [
-            'article' => $article[0],
-            'suggestions' => $suggestions
-        ]);
+            View::renderTemplate('Product/Show.html', [
+                'article' => $article[0],
+                'suggestions' => $suggestions
+            ]);
+        } catch (Exception) {
+            Flash::danger('Une erreur est survenue, veuillez réessayer');
+            header ("Location: /");
+        }
     }
 }
