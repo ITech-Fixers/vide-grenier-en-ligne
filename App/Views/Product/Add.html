@@ -39,6 +39,7 @@
                                 <div class="form-group">
                                     <label for="e2">Ville</label>
                                     <input class="form-control cityAutoComplete" type="text" autocomplete="off"/>
+                                    <input type="hidden" name="city_id" id="city_id"/>
                                 </div>
                             </div>
 
@@ -68,22 +69,46 @@
 {% endblock body %}
 
 {% block javascript %}
-    <script type="text/javascript">
-        $('.cityAutoComplete').autoComplete({
-            resolver: 'custom',
-            events: {
-                search: function (qry, callback) {
-                    // let's do a custom ajax call
-                    $.ajax(
-                        '/api/cities',
-                        {
-                            data: { 'query': qry}
-                        }
-                    ).done(function (res) {
-                        callback(res)
-                    });
-                }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script type="text/javascript">
+    var citySelected = false;
+
+    $(function() {
+        $(".cityAutoComplete").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: '/api/cities',
+                    data: {
+                        query: request.term
+                    },
+                    success: function(data) {
+                        response($.map(data, function(value, key) {
+                            return {
+                                label: value,
+                                value: key
+                            };
+                        }));
+                    }
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                $(".cityAutoComplete").val(ui.item.label);
+                $("#city_id").val(ui.item.value);
+                citySelected = true;
+                return false;
             }
         });
-    </script>
+    });
+
+    $('form').on('submit', function(e) {
+        if (!citySelected) {
+            e.preventDefault();
+            alert('Veuillez sélectionner une ville à partir de la liste déroulante.');
+        }
+    });
+</script>
 {% endblock %}
