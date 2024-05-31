@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Core\Model;
-use App\Core;
 use DateTime;
 use Exception;
-use App\Utility;
 
 /**
  * Articles Model
@@ -14,12 +12,14 @@ use App\Utility;
 class Articles extends Model {
 
     /**
-     * ?
+     * Récupère tous les articles
+     *
      * @access public
-     * @return string|boolean
-     * @throws Exception
+     * @param $filter
+     * @return array|false
      */
-    public static function getAll($filter) {
+    public static function getAll($filter): false|array
+    {
         $db = static::getDB();
 
         $query = 'SELECT * FROM articles ';
@@ -41,17 +41,21 @@ class Articles extends Model {
     }
 
     /**
-     * ?
+     * Récupère un article par son id
+     *
      * @access public
-     * @return string|boolean
-     * @throws Exception
+     * @param $id
+     * @return array|false
      */
-    public static function getOne($id) {
+    public static function getOne($id): array|false
+    {
         $db = static::getDB();
 
         $stmt = $db->prepare('
-            SELECT * FROM articles
+            SELECT articles.*, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
+            FROM articles
             INNER JOIN users ON articles.user_id = users.id
+            INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
             WHERE articles.id = ? 
             LIMIT 1');
 
@@ -61,12 +65,14 @@ class Articles extends Model {
     }
 
     /**
-     * ?
+     * Ajoute une vue à un article
+     *
      * @access public
-     * @return string|boolean
-     * @throws Exception
+     * @param $id
+     * @return void
      */
-    public static function addOneView($id) {
+    public static function addOneView($id): void
+    {
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -78,12 +84,14 @@ class Articles extends Model {
     }
 
     /**
-     * ?
+     * Récupère les articles d'un utilisateur
+     *
      * @access public
-     * @return string|boolean
-     * @throws Exception
+     * @param $id
+     * @return array|false
      */
-    public static function getByUser($id) {
+    public static function getByUser($id): false|array
+    {
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -97,12 +105,14 @@ class Articles extends Model {
     }
 
     /**
-     * ?
+     * Récupère les articles suggérés
+     *
      * @access public
-     * @return string|boolean
+     * @return array|false
      * @throws Exception
      */
-    public static function getSuggest() {
+    public static function getSuggest(): false|array
+    {
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -116,17 +126,18 @@ class Articles extends Model {
     }
 
 
-
     /**
-     * ?
+     * Sauvegarde un article
+     *
      * @access public
+     * @param $data
      * @return string|boolean
-     * @throws Exception
      */
-    public static function save($data) {
+    public static function save($data): bool|string
+    {
         $db = static::getDB();
 
-        $stmt = $db->prepare('INSERT INTO articles(name, description, user_id, published_date) VALUES (:name, :description, :user_id,:published_date)');
+        $stmt = $db->prepare('INSERT INTO articles(name, description, user_id, published_date, ville_id) VALUES (:name, :description, :user_id, :published_date, :ville_id)');
 
         $published_date =  new DateTime();
         $published_date = $published_date->format('Y-m-d');
@@ -134,13 +145,23 @@ class Articles extends Model {
         $stmt->bindParam(':description', $data['description']);
         $stmt->bindParam(':published_date', $published_date);
         $stmt->bindParam(':user_id', $data['user_id']);
+        $stmt->bindParam(':ville_id', $data['city_id']);
 
         $stmt->execute();
 
         return $db->lastInsertId();
     }
 
-    public static function attachPicture($articleId, $pictureName){
+    /**
+     * Attache une image à un article
+     *
+     * @access public
+     * @param $articleId
+     * @param $pictureName
+     * @return void
+     */
+    public static function attachPicture($articleId, $pictureName): void
+    {
         $db = static::getDB();
 
         $stmt = $db->prepare('UPDATE articles SET picture = :picture WHERE articles.id = :articleid');
@@ -151,8 +172,4 @@ class Articles extends Model {
 
         $stmt->execute();
     }
-
-
-
-
 }
