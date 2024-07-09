@@ -1,0 +1,34 @@
+openapi: 3.0.0
+info:
+  title: 'Vide grenier en ligne API'
+  description: 'Une API pour gérer les articles et les villes du vide grenier en ligne'
+  version: 1.0.0
+paths:
+  /products:
+    get:
+      summary: "Affiche la liste des articles / produits pour la page d'accueil"
+      operationId: 6cd0e1227267af9ea35e5694f447653a
+      responses:
+        '200':
+          description: 'Fetches products'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { id: { type: integer }, name: { type: string }, description: { type: string }, price: { type: number, format: float } }
+                  type: object
+  /cities:
+    get:
+      summary: 'Recherche dans la liste des villes'
+      operationId: 0014f0c235fa91f011782d3b517393ea
+      responses:
+        '200':
+          description: 'Search cities'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { id: { type: integer }, name: { type: string } }
+                  type: object
