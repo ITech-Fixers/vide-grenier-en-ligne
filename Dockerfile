@@ -57,6 +57,9 @@ COPY . /var/www/html
 # Installer les dépendances de l'application
 RUN cd /var/www/html && composer install && npm install
 
+# Générer le fichier swagger.yaml
+RUN cd /var/www/html && ./vendor/bin/openapi --output public/swagger-ui/swagger.yaml ./App/Controllers/
+
 # Changer le propriétaire des fichiers de l'application
 RUN chown -R www-data:www-data /var/www/html
 
