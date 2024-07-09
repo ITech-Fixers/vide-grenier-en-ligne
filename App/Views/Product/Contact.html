@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Contact{% endblock %}
+
+{% block body %}
+<div class="content-wrapper upload-page edit-page">
+
+    <!-- channel -->
+    <div class="container-fluid add-header">
+        <div class="row">
+            <h1>
+                Contacter le donateur
+            </h1>
+        </div>
+    </div>
+    <!-- ///channel -->
+    <div class="container mt-30">
+        <h2 class="mb-40">Article : <a href="/product/{{ article.article_id }}">{{ article.name }}</a></h2>
+        <form action="send/{{ article.article_id }}" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="u-form">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="e1">Libellé</label>
+                                    <input type="text" name="libellé" class="form-control" id="e1"
+                                           placeholder="Demande de renseignements" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group">
+                                    <label for="e2">Message</label>
+                                    <textarea class="form-control" name="message" id="e2" rows="3" required></textarea>
+                                </div>
+                            </div>
+                            <input type="hidden" name="owner_id" value="{{owner.id}}"/>
+                        </div>
+                    </div>
+
+                    <div class="u-area mt-small">
+                        <button name="submit" class="btn btn-primary u-btn">Valider</button>
+                    </div>
+                    <div class="u-terms">
+                        <p>En contactant le donateur, vous acceptez les <a href="#">conditions générales</a> de Vide Grenier en
+                            ligne.</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
