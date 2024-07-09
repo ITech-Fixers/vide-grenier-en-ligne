@@ -23,7 +23,17 @@ class Api extends Controller
      *     summary="Affiche la liste des articles / produits pour la page d'accueil",
      *     @OA\Response(
      *         response=200,
-     *         description="Fetches products"
+     *         description="Fetches products",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="description", type="string"),
+     *                 @OA\Property(property="price", type="number", format="float")
+     *             )
+     *         )
      *     )
      * )
      *
@@ -45,7 +55,15 @@ class Api extends Controller
      *     summary="Recherche dans la liste des villes",
      *     @OA\Response(
      *         response=200,
-     *         description="Search cities"
+     *         description="Search cities",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="name", type="string")
+     *             )
+     *         )
      *     )
      * )
      *

@@ -11,6 +11,13 @@ paths:
       responses:
         '200':
           description: 'Fetches products'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { id: { type: integer }, name: { type: string }, description: { type: string }, price: { type: number, format: float } }
+                  type: object
   /cities:
     get:
       summary: 'Recherche dans la liste des villes'
@@ -18,3 +25,10 @@ paths:
       responses:
         '200':
           description: 'Search cities'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { id: { type: integer }, name: { type: string } }
+                  type: object
