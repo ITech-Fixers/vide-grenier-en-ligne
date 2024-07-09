@@ -93,11 +93,7 @@ class User extends Controller
      */
     public function accountAction(): void
     {
-        $articles = Articles::getByUser($_SESSION['user']['id']);
-
-        View::renderTemplate('User/account.html', [
-            'articles' => $articles
-        ]);
+        View::renderTemplate('User/account.html');
     }
 
     /*
