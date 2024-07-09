@@ -31,7 +31,11 @@ class Api extends Controller
      *                 @OA\Property(property="id", type="integer"),
      *                 @OA\Property(property="name", type="string"),
      *                 @OA\Property(property="description", type="string"),
-     *                 @OA\Property(property="price", type="number", format="float")
+     *                 @OA\Property(property="published_date", type="string"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="views", type="integer"),
+     *                 @OA\Property(property="picture", type="string"),
+     *                 @OA\Property(property="ville_id", type="integer")
      *             )
      *         )
      *     )
