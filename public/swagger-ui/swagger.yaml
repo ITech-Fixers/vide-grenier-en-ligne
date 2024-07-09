@@ -16,7 +16,7 @@ paths:
               schema:
                 type: array
                 items:
-                  properties: { id: { type: integer }, name: { type: string }, description: { type: string }, price: { type: number, format: float } }
+                  properties: { id: { type: integer }, name: { type: string }, description: { type: string }, published_date: { type: string }, user_id: { type: integer }, views: { type: integer }, picture: { type: string }, ville_id: { type: integer } }
                   type: object
   /cities:
     get:
