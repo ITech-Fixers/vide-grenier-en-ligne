@@ -170,7 +170,7 @@ class Product extends Controller
                 $owner['username'],
                 $owner['email'],
                 $request['libellé'],
-                $request['message']
+                htmlspecialchars($request['message'])
             );
 
             Articles::addOneContact($articleId);
