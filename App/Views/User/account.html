@@ -39,8 +39,8 @@
                                             Plus récent <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><a href="#"><i class="cv cvicon-cv-relevant"></i> Popularité</a></li>
-                                            <li><a href="#"><i class="cv cvicon-cv-calender"></i> Plus récent</a></li>
+                                            <li><a onclick="getProductsAndRender('views')"><i class="cv cvicon-cv-relevant"></i> Popularité</a></li>
+                                            <li><a onclick="getProductsAndRender('date')"><i class="cv cvicon-cv-calender"></i> Plus récent</a></li>
                                         </ul>
                                     </div>
                                     <div class="clearfix"></div>
@@ -48,24 +48,8 @@
                             </div>
                         </div>
                         <div class="cb-content articlelist">
-                            <div class="row">
-                                {% for article in articles %}
-                                <div class=" col-lg-3 col-sm-6 articleitem">
-                                    <div class="b-article">
-                                        <div class="v-img">
-                                            <a
-                                                    href="{{ ('/product/' ~ article.id) }}"><img
-                                                    src="{{ ('/storage/' ~ article.picture) }}" alt=""></a>
-                                        </div>
-                                        <div class="v-desc">
-                                            <a href="{{ ('/product/' ~ article.id) }}">{{ article.name }}</a>
-                                        </div>
-                                        <div class="v-views">
-                                            {{article.views}} vues
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
+                            <div class="row" id="articlelist">
+
                             </div>
                         </div>
                     </div>
@@ -76,4 +60,43 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+    function getProductsAndRender(option = ''){
+        $.ajax({
+            url: "/api/userproducts" + '?sort=' + option,
+        }).done(function(result) {
+            $('#articlelist').empty();
+            for(let i = 0; i < result.length; i++){
+                renderProduct(result[i])
+            }
+        });
+    }
+
+    function renderProduct($product){
+        $('<div class="col-lg-3 col-sm-6 articleitem">' +
+            ' <div class="b-article">' +
+            '   <div class="v-img">' +
+            '     <a href="/product/'+ $product.id + '">' +
+            '       <img src="/storage/'+ $product.picture +'" alt=""></a>' +
+            '   </div>' +
+            '   <div class="v-desc">' +
+            '     <a href="/product/'+ $product.id + '">'+ $product.name+'</a>' +
+            '   </div>' +
+            '   <p>'+ $product.description.slice(0, 20) + '...</p>' +
+            '   <div class="v-views">' +
+            '     '+$product.views+' vues' +
+            '   </div>' +
+            ' </div>' +
+            '</div>'
+        ).appendTo($('#articlelist'));
+    }
+
+    $( document ).ready(function() {
+        getProductsAndRender();
+    });
+</script>
 {% endblock %}
