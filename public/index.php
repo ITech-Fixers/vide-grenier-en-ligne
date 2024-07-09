@@ -35,6 +35,8 @@ $router->add('logout', ['controller' => 'User', 'action' => 'logout', 'private' 
 $router->add('account', ['controller' => 'User', 'action' => 'account', 'private' => true]);
 $router->add('product', ['controller' => 'Product', 'action' => 'index', 'private' => true]);
 $router->add('product/{id:\d+}', ['controller' => 'Product', 'action' => 'show']);
+$router->add('product/contact/{id:\d+}', ['controller' => 'Product', 'action' => 'contact', 'private' => true]);
+$router->add('product/contact/send/{id:\d+}', ['controller' => 'Product', 'action' => 'sendMessage', 'private' => true]);
 $router->add('{controller}/{action}');
 
 /*

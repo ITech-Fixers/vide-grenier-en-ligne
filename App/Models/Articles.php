@@ -52,7 +52,7 @@ class Articles extends Model {
         $db = static::getDB();
 
         $stmt = $db->prepare('
-            SELECT articles.*, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
+            SELECT articles.id AS article_id, articles.*, users.id AS user_id, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
             FROM articles
             INNER JOIN users ON articles.user_id = users.id
             INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
@@ -78,6 +78,25 @@ class Articles extends Model {
         $stmt = $db->prepare('
             UPDATE articles 
             SET articles.views = articles.views + 1
+            WHERE articles.id = ?');
+
+        $stmt->execute([$id]);
+    }
+
+    /**
+     * Ajoute un contact à un article
+     *
+     * @access public
+     * @param $id
+     * @return void
+     */
+    public static function addOneContact($id): void
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            UPDATE articles 
+            SET articles.contact_count = articles.contact_count + 1
             WHERE articles.id = ?');
 
         $stmt->execute([$id]);

@@ -5,6 +5,7 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - "8080:80"
+      - "465:465"
     environment:
       MYSQL_HOST: db
       MYSQL_USER: root
