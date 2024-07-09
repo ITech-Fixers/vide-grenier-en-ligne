@@ -15,10 +15,10 @@ class Articles extends Model {
      * Récupère tous les articles
      *
      * @access public
-     * @param $filter
+     * @param string $filter
      * @return array|false
      */
-    public static function getAll($filter): false|array
+    public static function getAll(string $filter): false|array
     {
         $db = static::getDB();
 
@@ -36,6 +36,38 @@ class Articles extends Model {
         }
 
         $stmt = $db->query($query);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Récupère tous les articles d'un utilisateur
+     *
+     * @access public
+     * @param string $filter
+     * @param int $user_id
+     *
+     * @return array|false
+     */
+    public static function getAllByUser(string $filter, int $user_id): array|false
+    {
+        $db = static::getDB();
+
+        $query = 'SELECT * FROM articles WHERE user_id = ?';
+
+        switch ($filter){
+            case 'views':
+                $query .= ' ORDER BY articles.views DESC';
+                break;
+            case 'date':
+                $query .= ' ORDER BY articles.published_date DESC';
+                break;
+            case '':
+                break;
+        }
+
+        $stmt = $db->prepare($query);
+        $stmt->execute([$user_id]);
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
