@@ -20,7 +20,7 @@ class Api extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/products",
+     *     path="/api/products",
      *     summary="Affiche la liste des articles / produits pour la page d'accueil",
      *     @OA\Response(
      *         response=200,
@@ -56,7 +56,44 @@ class Api extends Controller
 
     /**
      * @OA\Get(
-     *     path="/cities",
+     *     path="/api/userproducts",
+     *     summary="Affiche la liste des articles / produits pour un utilisateur",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetches products",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="description", type="string"),
+     *                 @OA\Property(property="published_date", type="string"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="views", type="integer"),
+     *                 @OA\Property(property="picture", type="string"),
+     *                 @OA\Property(property="ville_id", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     *
+     * @throws Exception
+     */
+    public function UserProductsAction(): void
+    {
+        $query = $_GET['sort'];
+        $user_id = $_SESSION['user']['id'];
+
+        $articles = Articles::getAllByUser($query, $user_id);
+
+        header('Content-Type: application/json');
+        echo json_encode($articles);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/cities",
      *     summary="Recherche dans la liste des villes",
      *     @OA\Response(
      *         response=200,
