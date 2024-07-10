@@ -22,6 +22,46 @@ class Api extends Controller
      * @OA\Get(
      *     path="/api/products",
      *     summary="Affiche la liste des articles / produits pour la page d'accueil",
+     *     @OA\Parameter(
+     *         name="sort",
+     *         in="query",
+     *         required=false,
+     *         description="Critère de tri des produits (views ou date)",
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"views", "date"}
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="latitude",
+     *         in="query",
+     *         required=false,
+     *         description="Latitude pour la géolocalisation",
+     *         @OA\Schema(
+     *             type="number",
+     *             format="float"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="longitude",
+     *         in="query",
+     *         required=false,
+     *         description="Longitude pour la géolocalisation",
+     *         @OA\Schema(
+     *             type="number",
+     *             format="float"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="radius",
+     *         in="query",
+     *         required=false,
+     *         description="Rayon en kilomètres pour la géolocalisation",
+     *         @OA\Schema(
+     *             type="number",
+     *             format="float"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Fetches products",
@@ -46,21 +86,41 @@ class Api extends Controller
      */
     public function ProductsAction(): void
     {
-        $query = $_GET['sort'];
+        $query = $_GET['sort'] ?? null;
+        $latitude = $_GET['latitude'] ?? null;
+        $longitude = $_GET['longitude'] ?? null;
+        $radius = $_GET['radius'] ?? null;
 
-        $articles = Articles::getAll($query);
+        if ($latitude && $longitude && $radius) {
+            $articles = Articles::getNearby(floatval($latitude), floatval($longitude), floatval($radius));
+        } else if ($query) {
+            $articles = Articles::getAll($query);
+        } else {
+            $articles = Articles::getAll('');
+        }
 
         header('Content-Type: application/json');
         echo json_encode($articles);
     }
 
+
     /**
      * @OA\Get(
      *     path="/api/userproducts",
      *     summary="Affiche la liste des articles / produits pour un utilisateur",
+     *     @OA\Parameter(
+     *         name="sort",
+     *         in="query",
+     *         required=false,
+     *         description="Critère de tri des produits (views ou date)",
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"views", "date"}
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Fetches products",
+     *         description="Fetches user products",
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(
