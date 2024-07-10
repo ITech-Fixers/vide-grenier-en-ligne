@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<div class="container" style="padding: 20px">
+    <!-- Section des cartes -->
+    <div class="row mb-4" >
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Chiffre Clé 1</h5>
+                    <p class="card-text">1234</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Chiffre Clé 2</h5>
+                    <p class="card-text">5678</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Chiffre Clé 3</h5>
+                    <p class="card-text">91011</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Chiffre Clé 4</h5>
+                    <p class="card-text">121314</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section des graphiques -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="donatePerUserChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="myChart2"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="myChart3"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="myChart4"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .container {
+        padding-top: 20px;
+    }
+    .card {
+        margin: 8px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        border-radius: 10px;
+    }
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+    .card-body {
+        padding: 20px;
+    }
+    canvas {
+        width: 100% !important;
+        height: 300px !important; /* Réduction de la taille des graphiques */
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    // Fonction pour générer un tableau de couleurs aléatoires
+    const getRandomColors = (numColors) => {
+        const colors = [];
+        for (let i = 0; i < numColors; i++) {
+            colors.push(getRandomColor());
+        }
+        return colors;
+    };
+
+    const createChart = (ctxId, type, labels, data, label, dataLabel) => {
+        const ctx = document.getElementById(ctxId).getContext('2d');
+
+        new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: dataLabel,
+                    data: data,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: label
+                    }
+                }
+            }
+        });
+    };
+
+    const donatePerUserName = [];
+    const donatePerUserAmount = [];
+
+
+    $.ajax({
+        url: '/api/donatePerUser',
+        success: function(data) {
+            data.forEach(user => {
+                donatePerUserName.push(user.username);
+                donatePerUserAmount.push(user.nombre_d_articles);
+            });
+            console.log(donatePerUserName, donatePerUserAmount);
+            createChart('donatePerUserChart', 'bar', donatePerUserName, donatePerUserAmount, 'Articles donnés par utilisateur', 'Nombre d\'articles');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+    // DonnatePerCity
+    const donatePerCityName = [];
+    const donatePerCityAmount = [];
+
+    $.ajax({
+        url: '/api/donatePerCity',
+        success: function(data) {
+            data.forEach(city => {
+                donatePerCityName.push(city.ville_nom_reel);
+                donatePerCityAmount.push(city.nombre_d_articles);
+            });
+            console.log(donatePerCityName, donatePerCityAmount);
+            createChart('myChart2', 'bar', donatePerCityName, donatePerCityAmount, 'Articles donnés par ville', 'Nombre d\'articles');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+    //Most Viewed Articles
+    const mostViewedArticlesName = [];
+    const mostViewedArticlesAmount = [];
+
+    $.ajax({
+        url: '/api/mostViewed',
+        success: function(data) {
+            data.forEach(article => {
+                mostViewedArticlesName.push(article.name);
+                mostViewedArticlesAmount.push(article.views);
+            });
+            console.log(mostViewedArticlesName, mostViewedArticlesAmount);
+            createChart('myChart3', 'line', mostViewedArticlesName, mostViewedArticlesAmount, 'Articles les plus vus', 'Nombre de vues');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+
+    // Données pour les graphiques
+    const labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'];
+
+    createChart('myChart4', 'line', labels, [15, 25, 35, 45, 55, 65], 'Proportion');
+</script>
+{% endblock body %}

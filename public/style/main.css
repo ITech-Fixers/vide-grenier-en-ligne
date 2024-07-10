@@ -1583,7 +1583,6 @@ ul.menu ul li:not(:last-child) {
 
 .navbar-container {
   position: relative;
-  height: 70px;
   border-bottom: solid 1px #eceff0;
 }
 .navbar-container.single {
