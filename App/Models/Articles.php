@@ -76,6 +76,29 @@ class Articles extends Model {
     }
 
     /**
+     * Recherche des articles
+     *
+     * @access public
+     * @param string $search
+     * @return array|false
+     */
+    public static function search(string $search): false|array
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT articles.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
+            FROM articles
+            INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
+            WHERE articles.name LIKE :search OR articles.description LIKE :search');
+
+        $stmt->bindValue(':search', "%$search%", \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupère tous les articles d'un utilisateur
      *
      * @access public
