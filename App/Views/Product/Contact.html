@@ -15,9 +15,11 @@
     </div>
     <!-- ///channel -->
     <div class="container mt-30">
-        <h2 class="mb-40">Article : <a href="/product/{{ article.article_id }}">{{ article.name }}</a></h2>
+        <div class="row text-center">
+            <h3 class="mb-40">Article : <a href="/product/{{ article.article_id }}">{{ article.name }}</a></h3>
+        </div>
         <form action="send/{{ article.article_id }}" method="post" enctype="multipart/form-data">
-            <div class="row">
+            <div class="row" style="display: flex; justify-content: center;">
                 <div class="col-lg-6">
                     <div class="u-form">
                         <div class="row">
