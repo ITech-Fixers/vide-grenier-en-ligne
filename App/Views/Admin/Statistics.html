@@ -120,7 +120,7 @@
                 donatePerUserAmount.push(user.nombre_d_articles);
             });
             console.log(donatePerUserName, donatePerUserAmount);
-            createChart('donatePerUserChart', 'bar', donatePerUserName, donatePerUserAmount, 'Articles donnés par utilisateur', 'Nombre d\'articles');
+            createChart('donatePerUserChart', 'bar', donatePerUserName, donatePerUserAmount, 'Articles proposés par utilisateur', 'Nombre d\'articles');
         },
         error: function() {
             console.log('Erreur lors de la récupération des données');
@@ -139,7 +139,7 @@
                 donatePerCityAmount.push(city.nombre_d_articles);
             });
             console.log(donatePerCityName, donatePerCityAmount);
-            createChart('myChart2', 'bar', donatePerCityName, donatePerCityAmount, 'Articles donnés par ville', 'Nombre d\'articles');
+            createChart('myChart2', 'bar', donatePerCityName, donatePerCityAmount, 'Articles proposés par ville', 'Nombre d\'articles');
         },
         error: function() {
             console.log('Erreur lors de la récupération des données');
