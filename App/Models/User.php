@@ -137,4 +137,14 @@ class User extends Model {
 
         return $stmt->fetchColumn();
     }
+
+    public static function hasArticle(int $articleId, int $userId): bool
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE id = ? AND user_id = ?');
+        $stmt->execute([$articleId, $userId]);
+
+        return $stmt->fetchColumn();
+    }
 }
