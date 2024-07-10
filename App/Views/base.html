@@ -64,18 +64,20 @@
                     </ul>
                 </div>
 
-                <div class="col-lg-6 col-sm-8 col-xs-3">
-                    <!--<form action="search.html" method="post">
-                        <div class="topsearch">
-                            <i class="cv cvicon-cv-cancel topsearch-close"></i>
-                            <div class="input-group">
-                                <span class="input-group-addon" id="sizing-addon2"><i class="fa fa-search"></i></span>
-                                <input type="text" class="form-control" placeholder="Rechercher..."
-                                       aria-describedby="sizing-addon2">
+                {% if app.request.uri == "" %}
+                    <div class="col-lg-6 col-sm-8 col-xs-3">
+                        <form action="/" method="get" id="search-form">
+                            <div class="topsearch">
+                                <i class="cv cvicon-cv-cancel topsearch-close"></i>
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="sizing-addon2"><i class="fa fa-search"></i></span>
+                                    <input id="search-input" type="text" class="form-control" placeholder="Rechercher dans Vide Grenier en ligne"
+                                           aria-describedby="sizing-addon2" name="search">
+                                </div>
                             </div>
-                        </div>
-                    </form>-->
-                </div>
+                        </form>
+                    </div>
+                {% endif %}
 
                 {% if user is not null %}
 
@@ -216,7 +218,6 @@
 <script src="/bootstrap/js/bootstrap.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/xcash/bootstrap-autocomplete@v2.3.7/dist/latest/bootstrap-autocomplete.min.js"></script>
 <script src="/js/custom.js"></script>
-
 {% block javascript %}
 {% endblock %}
 </body>

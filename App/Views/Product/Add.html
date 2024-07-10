@@ -102,11 +102,12 @@
         });
     });
 
-    $('form').on('submit', function(e) {
-        if (!citySelected) {
+    $(document).on('keypress', function(e) {
+        if (e.which === 13) {
             e.preventDefault();
-            alert('Veuillez sélectionner une ville à partir de la liste déroulante.');
+            $('#search-form').submit();
         }
     });
+
 </script>
 {% endblock %}
