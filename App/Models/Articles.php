@@ -41,6 +41,41 @@ class Articles extends Model {
     }
 
     /**
+     * Récupère les articles à proximité
+     *
+     * @access public
+     * @param float $latitude
+     * @param float $longitude
+     * @param float $radius
+     * @return array|false
+     */
+    public static function getNearby(float $latitude, float $longitude, float $radius): false|array
+    {
+        $db = static::getDB();
+
+        $query = 'SELECT articles.*, villes_france.ville_latitude_deg, villes_france.ville_longitude_deg,
+              (6371 * acos(
+                cos(radians(:latitude)) * 
+                cos(radians(villes_france.ville_latitude_deg)) * 
+                cos(radians(villes_france.ville_longitude_deg) - radians(:longitude)) + 
+                sin(radians(:latitude)) * 
+                sin(radians(villes_france.ville_latitude_deg))
+              )) AS distance 
+              FROM articles 
+              JOIN villes_france ON articles.ville_id = villes_france.ville_id 
+              HAVING distance < :radius 
+              ORDER BY distance ASC';
+
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(':latitude', $latitude, \PDO::PARAM_STR);
+        $stmt->bindValue(':longitude', $longitude, \PDO::PARAM_STR);
+        $stmt->bindValue(':radius', $radius, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupère tous les articles d'un utilisateur
      *
      * @access public
