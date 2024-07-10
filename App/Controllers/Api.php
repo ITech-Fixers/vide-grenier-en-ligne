@@ -293,7 +293,7 @@ class Api extends Controller
     //GetUserCount
     /**
      * @OA\Get(
-     *     path="/getUserCount",
+     *     path="/statistics",
      *     summary="Affiche le nombre d'utilisateurs",
      *     @OA\Response(
      *         response=200,
