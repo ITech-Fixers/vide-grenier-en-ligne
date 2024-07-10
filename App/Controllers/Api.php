@@ -62,6 +62,15 @@ class Api extends Controller
      *             format="float"
      *         )
      *     ),
+     *     @OA\Parameter(
+     *          name="search",
+     *          in="query",
+     *          required=false,
+     *          description="Recherche dans les articles",
+     *          @OA\Schema(
+     *              type="string"
+     *         )
+     *    ),
      *     @OA\Response(
      *         response=200,
      *         description="Fetches products",
@@ -86,15 +95,18 @@ class Api extends Controller
      */
     public function ProductsAction(): void
     {
-        $query = $_GET['sort'] ?? null;
+        $sort = $_GET['sort'] ?? null;
         $latitude = $_GET['latitude'] ?? null;
         $longitude = $_GET['longitude'] ?? null;
         $radius = $_GET['radius'] ?? null;
+        $search = $_GET['search'] ?? null;
 
         if ($latitude && $longitude && $radius) {
             $articles = Articles::getNearby(floatval($latitude), floatval($longitude), floatval($radius));
-        } else if ($query) {
-            $articles = Articles::getAll($query);
+        } else if ($sort) {
+            $articles = Articles::getAll($sort);
+        } else if ($search) {
+            $articles = Articles::search($search);
         } else {
             $articles = Articles::getAll('');
         }

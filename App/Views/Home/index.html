@@ -79,10 +79,16 @@
 
     function getProductsAndRender(option = '', latitude = null, longitude = null, radius = null) {
         let url = "/api/products";
+
+        const searchParam = new URLSearchParams(window.location.search).get('search') || '';
+        $('#search-input').val(searchParam);
+
         if (option === 'nearby') {
             url += `?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
-        } else {
+        } else if (option) {
             url += `?sort=${option}`;
+        } else if (searchParam) {
+            url += `?search=${searchParam}`;
         }
 
         $.ajax({

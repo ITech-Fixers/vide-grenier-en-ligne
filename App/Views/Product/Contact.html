@@ -53,3 +53,14 @@
     </div>
 </div>
 {% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            $('#search-form').submit();
+        }
+    });
+</script>
+{% endblock %}
