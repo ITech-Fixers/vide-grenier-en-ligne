@@ -9,32 +9,32 @@
         <div class="col-md-3 mb-4">
             <div class="card shadow rounded">
                 <div class="card-body">
-                    <h5 class="card-title">Chiffre Clé 1</h5>
-                    <p class="card-text">1234</p>
+                    <h5 class="card-title">Utilisateurs</h5>
+                    <p class="card-text" id="user">0</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3 mb-4">
             <div class="card shadow rounded">
                 <div class="card-body">
-                    <h5 class="card-title">Chiffre Clé 2</h5>
-                    <p class="card-text">5678</p>
+                    <h5 class="card-title">Nombre d'articles en ligne</h5>
+                    <p class="card-text" id="online">0</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3 mb-4">
             <div class="card shadow rounded">
                 <div class="card-body">
-                    <h5 class="card-title">Chiffre Clé 3</h5>
-                    <p class="card-text">91011</p>
+                    <h5 class="card-title">Nombre d'articles total</h5>
+                    <p class="card-text" id="total">0</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3 mb-4">
             <div class="card shadow rounded">
                 <div class="card-body">
-                    <h5 class="card-title">Chiffre Clé 4</h5>
-                    <p class="card-text">121314</p>
+                    <h5 class="card-title">Nombre d'articles donnés</h5>
+                    <p class="card-text" id="gived">0</p>
                 </div>
             </div>
         </div>
@@ -75,40 +75,9 @@
     </div>
 </div>
 
-<style>
-    .container {
-        padding-top: 20px;
-    }
-    .card {
-        margin: 8px;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        transition: 0.3s;
-        border-radius: 10px;
-    }
-    .card:hover {
-        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
-    }
-    .card-body {
-        padding: 20px;
-    }
-    canvas {
-        width: 100% !important;
-        height: 300px !important; /* Réduction de la taille des graphiques */
-    }
-</style>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-
-    // Fonction pour générer un tableau de couleurs aléatoires
-    const getRandomColors = (numColors) => {
-        const colors = [];
-        for (let i = 0; i < numColors; i++) {
-            colors.push(getRandomColor());
-        }
-        return colors;
-    };
 
     const createChart = (ctxId, type, labels, data, label, dataLabel) => {
         const ctx = document.getElementById(ctxId).getContext('2d');
@@ -158,7 +127,7 @@
         }
     });
 
-    // DonnatePerCity
+
     const donatePerCityName = [];
     const donatePerCityAmount = [];
 
@@ -177,7 +146,7 @@
         }
     });
 
-    //Most Viewed Articles
+
     const mostViewedArticlesName = [];
     const mostViewedArticlesAmount = [];
 
@@ -197,9 +166,37 @@
     });
 
 
-    // Données pour les graphiques
-    const labels = ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'];
+    const mostContactedArticlesName = [];
+    const mostContactedArticlesAmount = [];
 
-    createChart('myChart4', 'line', labels, [15, 25, 35, 45, 55, 65], 'Proportion');
+    $.ajax({
+        url: '/api/mostContacted',
+        success: function(data) {
+            data.forEach(article => {
+                mostContactedArticlesName.push(article.name);
+                mostContactedArticlesAmount.push(article.contact_count);
+            });
+            console.log(mostContactedArticlesName, mostContactedArticlesAmount);
+            createChart('myChart4', 'line', mostContactedArticlesName, mostContactedArticlesAmount, 'Articles les plus contactés', 'Nombre de contacts');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+    $.ajax({
+        url: '/api/statistics',
+        success: function(data) {
+            $('#user').text(data.user_count);
+            $('#online').text(data.online_article_count);
+            $('#total').text(data.total_article_count);
+            $('#gived').text(data.gived_article_count);
+            console.log(data);
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
 </script>
 {% endblock body %}

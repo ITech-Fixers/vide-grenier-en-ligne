@@ -89,6 +89,11 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a href="/account">Mon compte</a></li>
+                                <li><a href="/product">Déposer une annonce</a></li>
+                                {% if user.is_admin %}
+                                <li><a href="/admin/statistics">Statistiques</a></li>
+                                {% endif %}
+                                <li role="separator" class="divider"></li>
                                 <li><a href="/logout">Déconnexion</a></li>
                             </ul>
                         </div>

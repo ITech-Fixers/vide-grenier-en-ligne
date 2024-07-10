@@ -6,6 +6,7 @@ use App\Models\Articles;
 use App\Models\Cities;
 use Core\Controller;
 use Exception;
+use App\Models\User;
 use OpenApi\Annotations as OA;
 
 
@@ -241,15 +242,18 @@ class Api extends Controller
      *     path="/mostViewed",
      *     summary="Affiche les articles les plus vus",
      *     @OA\Response(
-     *     response=200,
-     *     description="Fetches statistics",
-     *     @OA\JsonContent(
-     *     type="array",
-     *     @OA\Items(
-     *     type="object",
-     *     @OA\Property(property="name", type="string"),
-     *     @OA\Property(property="views", type="integer")
-     *    )
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="views", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function MostViewedAction(): void
     {
@@ -265,14 +269,56 @@ class Api extends Controller
      *     path="/mostContacted",
      *     summary="Affiche les articles qui découle sur un contact",
      *     @OA\Response(
-     *     response=200,
-     *     description="Fetches statistics",
-     *     @OA\JsonContent(
-     *     type="array",
-     *     @OA\Items(
-     *     type="object",
-     *     @OA\Property(property="name", type="string"),
-     *     @OA\Property(property="contacts", type="integer")
-     *    )
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="contact_count", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
      */
+    public function MostContactedAction(): void
+    {
+        $statistics = Articles::mostContacted();
+
+        header('Content-Type: application/json');
+        echo json_encode($statistics);
+    }
+
+    //GetUserCount
+    /**
+     * @OA\Get(
+     *     path="/getUserCount",
+     *     summary="Affiche le nombre d'utilisateurs",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="user_count", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function StatisticsAction(): void
+    {
+        $users = User::getUserCount();
+        $totalArticles = Articles::getTotalArticleCount();
+
+        $statistics = [
+            'user_count' => $users,
+            'total_article_count' => $totalArticles
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($statistics);
+    }
 }

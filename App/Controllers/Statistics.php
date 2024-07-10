@@ -20,11 +20,23 @@ class Statistics extends Controller
     public function index(): void
     {
 
-        try {
-            View::renderTemplate('Admin/Statistics.html');
-        } catch (Exception) {
-            Flash::danger('Une erreur est survenue, veuillez réessayer');
-            header ("Location: /");
+        //if user not null
+        if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
+            if ($_SESSION['user']['is_admin']) {
+                try {
+                    View::renderTemplate('Admin/Statistics.html');
+                } catch (Exception $e) {
+                    Flash::danger('Une erreur est survenue, veuillez réessayer');
+                    header("Location: /");
+                    exit;
+                }
+            } else {
+                header("Location: /");
+                exit;
+            }
+        } else {
+            header("Location: /");
+            exit;
         }
     }
 }

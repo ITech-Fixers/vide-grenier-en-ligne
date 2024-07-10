@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /*
 * General Styles
 */
@@ -756,6 +757,35 @@ video {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.container {
+  padding-top: 20px;
+}
+
+.card {
+  margin: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 10px;
+}
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+canvas {
+  width: 100% !important;
+  height: 300px !important; /* Réduction de la taille des graphiques */
+}
+
+.card-text {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
 }
 
 /*

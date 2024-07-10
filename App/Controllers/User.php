@@ -24,6 +24,7 @@ class User extends Controller
         parent::__construct($route_params);
     }
 
+
     /**
      * Affiche la page de login
      * @throws Exception
@@ -137,7 +138,9 @@ class User extends Controller
         $_SESSION['user'] = array(
             'id' => $user['id'],
             'username' => $user['username'],
+            'is_admin' => $user['is_admin'] == 1
         );
+
 
         if (isset($data['remember-me'])) {
             $this->createRememberMeToken($user['id']);

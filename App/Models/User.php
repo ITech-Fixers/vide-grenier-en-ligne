@@ -127,4 +127,14 @@ class User extends Model {
 
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
+
+    public static function getUserCount()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM users');
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
 }

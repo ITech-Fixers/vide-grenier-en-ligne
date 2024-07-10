@@ -309,4 +309,49 @@ class Articles extends Model {
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
+
+    public static function mostContacted()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT a.name, a.contact_count 
+            FROM articles a 
+            ORDER BY a.contact_count DESC
+            LIMIT 5');
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function getOnlineArticleCount()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE  is_desactivated = false AND is_donated = false');
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
+    public static function getDonatedArticleCount()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE  is_desactivated = false AND is_donated = true');
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
+    public static function getTotalArticleCount()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles');
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
 }

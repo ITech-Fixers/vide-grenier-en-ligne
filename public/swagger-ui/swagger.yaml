@@ -92,3 +92,73 @@ paths:
                 items:
                   properties: { id: { type: integer }, name: { type: string } }
                   type: object
+  /donatePerUser:
+    get:
+      summary: "Affiche le nombre d'articles donnés par utilisateur"
+      operationId: d07a65470a6f856bd740975bea03e47a
+      responses:
+        '200':
+          description: 'Fetches statistics'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { username: { type: string }, nombre_d_articles: { type: integer } }
+                  type: object
+  /donatePerCity:
+    get:
+      summary: "Affiche le nombre d'articles donnés par ville"
+      operationId: 235c172bf85cf1b4541ae30a7c847c44
+      responses:
+        '200':
+          description: 'Fetches statistics'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { city: { type: string }, nombre_d_articles: { type: integer } }
+                  type: object
+  /mostViewed:
+    get:
+      summary: 'Affiche les articles les plus vus'
+      operationId: 4303eca040967038f60faddd2f713426
+      responses:
+        '200':
+          description: 'Fetches statistics'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { name: { type: string }, views: { type: integer } }
+                  type: object
+  /mostContacted:
+    get:
+      summary: 'Affiche les articles qui découle sur un contact'
+      operationId: ae0d05dcdac2596ff012b0aba6b600a0
+      responses:
+        '200':
+          description: 'Fetches statistics'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { name: { type: string }, contact_count: { type: integer } }
+                  type: object
+  /getUserCount:
+    get:
+      summary: "Affiche le nombre d'utilisateurs"
+      operationId: 13e3f3266c4ee595f50dd1646b715f73
+      responses:
+        '200':
+          description: 'Fetches statistics'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { user_count: { type: integer } }
+                  type: object
