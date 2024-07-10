@@ -43,6 +43,13 @@ paths:
           schema:
             type: number
             format: float
+        -
+          name: search
+          in: query
+          description: 'Recherche dans les articles'
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: 'Fetches products'
