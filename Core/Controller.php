@@ -84,6 +84,7 @@ abstract class Controller
                 $_SESSION['user'] = array(
                     'id' => $user['id'],
                     'username' => $user['username'],
+                    'is_admin' => $user['is_admin'] === '1'
                 );
             }
         }

@@ -6,6 +6,7 @@ use App\Models\Articles;
 use App\Models\Cities;
 use Core\Controller;
 use Exception;
+use App\Models\User;
 use OpenApi\Annotations as OA;
 
 
@@ -189,5 +190,147 @@ class Api extends Controller
 
         header('Content-Type: application/json');
         echo json_encode($cities);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/donatePerUser",
+     *     summary="Affiche le nombre d'articles donnés par utilisateur",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="username", type="string"),
+     *                 @OA\Property(property="nombre_d_articles", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     *
+     * @throws Exception
+     */
+    public function DonatePerUserAction(): void
+    {
+        $statistics = Articles::donatePerUser();
+
+        header('Content-Type: application/json');
+        echo json_encode($statistics);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/donatePerCity",
+     *     summary="Affiche le nombre d'articles donnés par ville",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="city", type="string"),
+     *                 @OA\Property(property="nombre_d_articles", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     *
+     * @throws Exception
+     */
+    public function DonatePerCityAction(): void
+    {
+        $statistics = Articles::donatePerCity();
+
+        header('Content-Type: application/json');
+        echo json_encode($statistics);
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/mostViewed",
+     *     summary="Affiche les articles les plus vus",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="views", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function MostViewedAction(): void
+    {
+        $statistics = Articles::mostViewed();
+
+        header('Content-Type: application/json');
+        echo json_encode($statistics);
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/mostContacted",
+     *     summary="Affiche les articles qui découle sur un contact",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="name", type="string"),
+     *                 @OA\Property(property="contact_count", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function MostContactedAction(): void
+    {
+        $statistics = Articles::mostContacted();
+
+        header('Content-Type: application/json');
+        echo json_encode($statistics);
+    }
+
+    //GetUserCount
+    /**
+     * @OA\Get(
+     *     path="/statistics",
+     *     summary="Affiche le nombre d'utilisateurs",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Fetches statistics",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="user_count", type="integer")
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function StatisticsAction(): void
+    {
+        $users = User::getUserCount();
+        $totalArticles = Articles::getTotalArticleCount();
+
+        $statistics = [
+            'user_count' => $users,
+            'total_article_count' => $totalArticles
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($statistics);
     }
 }

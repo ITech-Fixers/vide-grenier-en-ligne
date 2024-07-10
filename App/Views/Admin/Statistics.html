@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+<div class="container" style="padding: 20px">
+    <!-- Section des cartes -->
+    <div class="row mb-4" >
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Utilisateurs</h5>
+                    <p class="card-text" id="user">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Nombre d'articles en ligne</h5>
+                    <p class="card-text" id="online">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Nombre d'articles total</h5>
+                    <p class="card-text" id="total">0</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <h5 class="card-title">Nombre d'articles donnés</h5>
+                    <p class="card-text" id="gived">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section des graphiques -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="donatePerUserChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="myChart2"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="myChart3"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow rounded">
+                <div class="card-body">
+                    <canvas id="myChart4"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    const createChart = (ctxId, type, labels, data, label, dataLabel) => {
+        const ctx = document.getElementById(ctxId).getContext('2d');
+
+        new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: dataLabel,
+                    data: data,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: label
+                    }
+                }
+            }
+        });
+    };
+
+    const donatePerUserName = [];
+    const donatePerUserAmount = [];
+
+
+    $.ajax({
+        url: '/api/donatePerUser',
+        success: function(data) {
+            data.forEach(user => {
+                donatePerUserName.push(user.username);
+                donatePerUserAmount.push(user.nombre_d_articles);
+            });
+            console.log(donatePerUserName, donatePerUserAmount);
+            createChart('donatePerUserChart', 'bar', donatePerUserName, donatePerUserAmount, 'Articles donnés par utilisateur', 'Nombre d\'articles');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+
+    const donatePerCityName = [];
+    const donatePerCityAmount = [];
+
+    $.ajax({
+        url: '/api/donatePerCity',
+        success: function(data) {
+            data.forEach(city => {
+                donatePerCityName.push(city.ville_nom_reel);
+                donatePerCityAmount.push(city.nombre_d_articles);
+            });
+            console.log(donatePerCityName, donatePerCityAmount);
+            createChart('myChart2', 'bar', donatePerCityName, donatePerCityAmount, 'Articles donnés par ville', 'Nombre d\'articles');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+
+    const mostViewedArticlesName = [];
+    const mostViewedArticlesAmount = [];
+
+    $.ajax({
+        url: '/api/mostViewed',
+        success: function(data) {
+            data.forEach(article => {
+                mostViewedArticlesName.push(article.name);
+                mostViewedArticlesAmount.push(article.views);
+            });
+            console.log(mostViewedArticlesName, mostViewedArticlesAmount);
+            createChart('myChart3', 'line', mostViewedArticlesName, mostViewedArticlesAmount, 'Articles les plus vus', 'Nombre de vues');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+
+    const mostContactedArticlesName = [];
+    const mostContactedArticlesAmount = [];
+
+    $.ajax({
+        url: '/api/mostContacted',
+        success: function(data) {
+            data.forEach(article => {
+                mostContactedArticlesName.push(article.name);
+                mostContactedArticlesAmount.push(article.contact_count);
+            });
+            console.log(mostContactedArticlesName, mostContactedArticlesAmount);
+            createChart('myChart4', 'line', mostContactedArticlesName, mostContactedArticlesAmount, 'Articles les plus contactés', 'Nombre de contacts');
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+    $.ajax({
+        url: '/api/statistics',
+        success: function(data) {
+            $('#user').text(data.user_count);
+            $('#online').text(data.online_article_count);
+            $('#total').text(data.total_article_count);
+            $('#gived').text(data.gived_article_count);
+            console.log(data);
+        },
+        error: function() {
+            console.log('Erreur lors de la récupération des données');
+        }
+    });
+
+</script>
+{% endblock body %}

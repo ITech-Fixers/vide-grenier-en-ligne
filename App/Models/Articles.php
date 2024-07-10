@@ -281,4 +281,100 @@ class Articles extends Model {
 
         $stmt->execute();
     }
+
+    public static function donatePerUser()
+    {
+
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT u.username, COUNT(a.id) AS nombre_d_articles
+            FROM articles a
+            JOIN users u ON a.user_id = u.id
+            GROUP BY u.username 
+            ORDER BY nombre_d_articles DESC
+            LIMIT 5');
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function donatePerCity()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT v.ville_nom_reel, COUNT(a.id) AS nombre_d_articles
+            FROM articles a 
+            JOIN villes_france v on a.ville_id = v.ville_id 
+            GROUP BY v.ville_nom_reel 
+            ORDER BY nombre_d_articles DESC
+            LIMIT 5');
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+
+    public static function mostViewed()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT a.name, a.views 
+            FROM articles a 
+            ORDER BY a.views DESC
+            LIMIT 5');
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function mostContacted()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT a.name, a.contact_count 
+            FROM articles a 
+            ORDER BY a.contact_count DESC
+            LIMIT 5');
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public static function getOnlineArticleCount()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE  is_desactivated = false AND is_donated = false');
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
+    public static function getDonatedArticleCount()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE  is_desactivated = false AND is_donated = true');
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
+    public static function getTotalArticleCount()
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles');
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
 }

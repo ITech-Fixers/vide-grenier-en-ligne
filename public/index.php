@@ -37,6 +37,7 @@ $router->add('product', ['controller' => 'Product', 'action' => 'index', 'privat
 $router->add('product/{id:\d+}', ['controller' => 'Product', 'action' => 'show']);
 $router->add('product/contact/{id:\d+}', ['controller' => 'Product', 'action' => 'contact', 'private' => true]);
 $router->add('product/contact/send/{id:\d+}', ['controller' => 'Product', 'action' => 'sendMessage', 'private' => true]);
+$router->add('admin/statistics', ['controller' => 'Statistics', 'action' => 'index']);
 $router->add('{controller}/{action}');
 
 /*
