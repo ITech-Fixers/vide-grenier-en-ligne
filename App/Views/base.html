@@ -64,20 +64,18 @@
                     </ul>
                 </div>
 
-                {% if app.request.uri == "" %}
-                    <div class="col-lg-6 col-sm-8 col-xs-3">
-                        <form action="/" method="get" id="search-form">
-                            <div class="topsearch">
-                                <i class="cv cvicon-cv-cancel topsearch-close"></i>
-                                <div class="input-group">
-                                    <span class="input-group-addon" id="sizing-addon2"><i class="fa fa-search"></i></span>
-                                    <input id="search-input" type="text" class="form-control" placeholder="Rechercher dans Vide Grenier en ligne"
-                                           aria-describedby="sizing-addon2" name="search">
-                                </div>
+                <div class="col-lg-6 col-sm-8 col-xs-3">
+                    <form action="/" method="get" id="search-form">
+                        <div class="topsearch">
+                            <i class="cv cvicon-cv-cancel topsearch-close"></i>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="sizing-addon2"><i class="fa fa-search"></i></span>
+                                <input id="search-input" type="text" class="form-control" placeholder="Rechercher dans Vide Grenier en ligne"
+                                       aria-describedby="sizing-addon2" name="search">
                             </div>
-                        </form>
-                    </div>
-                {% endif %}
+                        </div>
+                    </form>
+                </div>
 
                 {% if user is not null %}
 
