@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Exception\ArticleNotFoundException;
 use App\Exception\CityNotFoundException;
 use App\Exception\MailerException;
+use App\Exception\PermissionException;
 use App\Exception\UserNotFoundException;
 use App\Exception\ValidationException;
 use App\Models\Articles;
@@ -69,6 +70,193 @@ class Product extends Controller
     }
 
     /**
+     * Affiche la page de modification d'un produit
+     * @return void
+     * @throws Exception
+     */
+    public function showEditAction(): void
+    {
+        $id = $this->route_params['id'];
+
+        try {
+
+            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+                throw new PermissionException("Vous n'êtes pas autorisé à modifier cet article");
+            }
+
+            $article = Articles::getById($id);
+
+            if (empty($article)) {
+                throw new ArticleNotFoundException('L\'article n\'existe pas');
+            }
+
+            View::renderTemplate('Product/Add.html', [
+                'article' => $article[0],
+                'update' => true,
+            ]);
+        } catch (ArticleNotFoundException|PermissionException $e) {
+            Flash::danger($e->getMessage());
+            header ("Location: /");
+        } catch (Exception) {
+            Flash::danger('Une erreur est survenue, veuillez réessayer');
+            header ("Location: /");
+        }
+    }
+
+    /**
+     * Marque un produit comme donné
+     * @return void
+     * @throws Exception
+     */
+    public function giveAction(): void
+    {
+        $id = $this->route_params['id'];
+
+        try {
+            $article = Articles::getByIdActivated($id);
+
+            if (empty($article)) {
+                throw new ArticleNotFoundException('L\'article n\'existe pas');
+            }
+
+            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+                throw new PermissionException("Vous n'êtes pas autorisé à donner cet article");
+            }
+
+            Articles::give($id);
+            Articles::deactivate($id);
+
+            Flash::success('Article donné avec succès');
+            header ("Location: /");
+        } catch (ArticleNotFoundException|PermissionException $e) {
+            Flash::danger($e->getMessage());
+            header ("Location: /");
+        } catch (Exception) {
+            Flash::danger('Une erreur est survenue, veuillez réessayer');
+            header ("Location: /");
+        }
+    }
+
+    /**
+     * Met à jour un produit
+     * @return void
+     * @throws Exception
+     */
+    public function updateAction(): void
+    {
+        $id = $this->route_params['id'];
+
+        try {
+            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+                throw new PermissionException("Vous n'êtes pas autorisé à modifier cet article");
+            }
+
+            $article = Articles::getById($id);
+
+            if (empty($article)) {
+                throw new ArticleNotFoundException('L\'article n\'existe pas');
+            }
+
+            $request = $_POST;
+            $errors = ArticleAdd::validate($request);
+
+            if (!empty($errors)) {
+                throw new ValidationException(implode('<br>', $errors));
+            }
+
+            $city = Cities::getById($request['city_id']);
+
+            if (empty($city)) {
+                throw new CityNotFoundException('La ville sélectionnée n\'existe pas');
+            }
+
+            $request['user_id'] = $_SESSION['user']['id'];
+            Articles::update($id, $request);
+
+            if (!empty($_FILES['picture']['name'])) {
+                $pictureName = Upload::uploadFile($_FILES['picture'], $id);
+                Articles::attachPicture($id, $pictureName);
+            }
+
+            Flash::success('Produit modifié avec succès');
+            $this->route_params['id'] = $id;
+            $this->showAction();
+        } catch (ArticleNotFoundException|PermissionException|ValidationException|CityNotFoundException $e) {
+            Flash::danger($e->getMessage());
+            header ("Location: /");
+        } catch (Exception) {
+            Flash::danger('Une erreur est survenue, veuillez réessayer');
+            header ("Location: /");
+        }
+    }
+
+    /**
+     * Active un produit
+     * @return void
+     * @throws Exception
+     */
+    public function activateAction(): void
+    {
+        $id = $this->route_params['id'];
+
+        try {
+            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+                throw new PermissionException("Vous n'êtes pas autorisé à activer cet article");
+            }
+
+            $article = Articles::getById($id);
+
+            if (empty($article)) {
+                throw new ArticleNotFoundException('L\'article n\'existe pas');
+            }
+
+            Articles::activate($id);
+
+            Flash::success('Article activé avec succès');
+            header ("Location: /");
+        } catch (ArticleNotFoundException|PermissionException $e) {
+            Flash::danger($e->getMessage());
+            header ("Location: /");
+        } catch (Exception) {
+            Flash::danger('Une erreur est survenue, veuillez réessayer');
+            header ("Location: /");
+        }
+    }
+
+    /**
+     * Désactive un produit
+     * @return void
+     * @throws Exception
+     */
+    public function deactivateAction(): void
+    {
+        $id = $this->route_params['id'];
+
+        try {
+            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+                throw new PermissionException("Vous n'êtes pas autorisé à désactiver cet article");
+            }
+
+            $article = Articles::getByIdActivated($id);
+
+            if (empty($article)) {
+                throw new ArticleNotFoundException('L\'article n\'existe pas');
+            }
+
+            Articles::deactivate($id);
+
+            Flash::success('Article désactivé avec succès');
+            header ("Location: /");
+        } catch (ArticleNotFoundException|PermissionException $e) {
+            Flash::danger($e->getMessage());
+            header ("Location: /");
+        } catch (Exception) {
+            Flash::danger('Une erreur est survenue, veuillez réessayer');
+            header ("Location: /");
+        }
+    }
+
+    /**
      * Affiche la page d'un produit
      * @return void
      * @throws Exception
@@ -80,7 +268,14 @@ class Product extends Controller
         try {
             Articles::addOneView($id);
             $suggestions = Articles::getSuggest();
-            $article = Articles::getOne($id);
+
+            if (isset($_SESSION['user']) && User::hasArticle($id, $_SESSION['user']['id'])) {
+                $article = Articles::getById($id);
+            } else {
+                $article = Articles::getByIdActivated($id);
+            }
+
+            $isAuthor = User::hasArticle($id, $_SESSION['user']['id']);
 
             if (empty($article)) {
                 throw new ArticleNotFoundException('L\'article n\'existe pas');
@@ -88,7 +283,8 @@ class Product extends Controller
 
             View::renderTemplate('Product/Show.html', [
                 'article' => $article[0],
-                'suggestions' => $suggestions
+                'suggestions' => $suggestions,
+                'isAuthor' => $isAuthor
             ]);
         } catch (ArticleNotFoundException $e) {
             Flash::danger($e->getMessage());
@@ -107,7 +303,7 @@ class Product extends Controller
     public function contactAction(): void
     {
         $articleId = $this->route_params['id'];
-        $article = Articles::getOne($articleId);
+        $article = Articles::getByIdActivated($articleId);
 
         try {
             if (empty($article)) {
@@ -143,7 +339,7 @@ class Product extends Controller
         $articleId = $this->route_params['id'];
 
         try {
-            $article = Articles::getOne($articleId);
+            $article = Articles::getByIdActivated($articleId);
 
             if (empty($article)) {
                 throw new ArticleNotFoundException('L\'article n\'existe pas');
