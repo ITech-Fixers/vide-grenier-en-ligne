@@ -15,10 +15,10 @@ class Articles extends Model {
      * Récupère tous les articles
      *
      * @access public
-     * @param $filter
+     * @param string $filter
      * @return array|false
      */
-    public static function getAll($filter): false|array
+    public static function getAll(string $filter): false|array
     {
         $db = static::getDB();
 
@@ -41,6 +41,73 @@ class Articles extends Model {
     }
 
     /**
+     * Récupère les articles à proximité
+     *
+     * @access public
+     * @param float $latitude
+     * @param float $longitude
+     * @param float $radius
+     * @return array|false
+     */
+    public static function getNearby(float $latitude, float $longitude, float $radius): false|array
+    {
+        $db = static::getDB();
+
+        $query = 'SELECT articles.*, villes_france.ville_latitude_deg, villes_france.ville_longitude_deg,
+              (6371 * acos(
+                cos(radians(:latitude)) * 
+                cos(radians(villes_france.ville_latitude_deg)) * 
+                cos(radians(villes_france.ville_longitude_deg) - radians(:longitude)) + 
+                sin(radians(:latitude)) * 
+                sin(radians(villes_france.ville_latitude_deg))
+              )) AS distance 
+              FROM articles 
+              JOIN villes_france ON articles.ville_id = villes_france.ville_id 
+              HAVING distance < :radius 
+              ORDER BY distance ASC';
+
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(':latitude', $latitude, \PDO::PARAM_STR);
+        $stmt->bindValue(':longitude', $longitude, \PDO::PARAM_STR);
+        $stmt->bindValue(':radius', $radius, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Récupère tous les articles d'un utilisateur
+     *
+     * @access public
+     * @param string $filter
+     * @param int $user_id
+     *
+     * @return array|false
+     */
+    public static function getAllByUser(string $filter, int $user_id): array|false
+    {
+        $db = static::getDB();
+
+        $query = 'SELECT * FROM articles WHERE user_id = ?';
+
+        switch ($filter){
+            case 'views':
+                $query .= ' ORDER BY articles.views DESC';
+                break;
+            case 'date':
+                $query .= ' ORDER BY articles.published_date DESC';
+                break;
+            case '':
+                break;
+        }
+
+        $stmt = $db->prepare($query);
+        $stmt->execute([$user_id]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupère un article par son id
      *
      * @access public
@@ -52,7 +119,7 @@ class Articles extends Model {
         $db = static::getDB();
 
         $stmt = $db->prepare('
-            SELECT articles.*, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
+            SELECT articles.id AS article_id, articles.*, users.id AS user_id, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
             FROM articles
             INNER JOIN users ON articles.user_id = users.id
             INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
@@ -78,6 +145,25 @@ class Articles extends Model {
         $stmt = $db->prepare('
             UPDATE articles 
             SET articles.views = articles.views + 1
+            WHERE articles.id = ?');
+
+        $stmt->execute([$id]);
+    }
+
+    /**
+     * Ajoute un contact à un article
+     *
+     * @access public
+     * @param $id
+     * @return void
+     */
+    public static function addOneContact($id): void
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            UPDATE articles 
+            SET articles.contact_count = articles.contact_count + 1
             WHERE articles.id = ?');
 
         $stmt->execute([$id]);

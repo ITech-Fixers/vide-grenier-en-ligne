@@ -4,10 +4,45 @@ info:
   description: 'Une API pour gérer les articles et les villes du vide grenier en ligne'
   version: 1.0.0
 paths:
-  /products:
+  /api/products:
     get:
       summary: "Affiche la liste des articles / produits pour la page d'accueil"
-      operationId: 6cd0e1227267af9ea35e5694f447653a
+      operationId: e35803db7dc3263e3622538255f4c890
+      parameters:
+        -
+          name: sort
+          in: query
+          description: 'Critère de tri des produits (views ou date)'
+          required: false
+          schema:
+            type: string
+            enum:
+              - views
+              - date
+        -
+          name: latitude
+          in: query
+          description: 'Latitude pour la géolocalisation'
+          required: false
+          schema:
+            type: number
+            format: float
+        -
+          name: longitude
+          in: query
+          description: 'Longitude pour la géolocalisation'
+          required: false
+          schema:
+            type: number
+            format: float
+        -
+          name: radius
+          in: query
+          description: 'Rayon en kilomètres pour la géolocalisation'
+          required: false
+          schema:
+            type: number
+            format: float
       responses:
         '200':
           description: 'Fetches products'
@@ -16,12 +51,37 @@ paths:
               schema:
                 type: array
                 items:
-                  properties: { id: { type: integer }, name: { type: string }, description: { type: string }, price: { type: number, format: float } }
+                  properties: { id: { type: integer }, name: { type: string }, description: { type: string }, published_date: { type: string }, user_id: { type: integer }, views: { type: integer }, picture: { type: string }, ville_id: { type: integer } }
                   type: object
-  /cities:
+  /api/userproducts:
+    get:
+      summary: 'Affiche la liste des articles / produits pour un utilisateur'
+      operationId: d0cf98fe01d84a4748d9fc5a59ff48a0
+      parameters:
+        -
+          name: sort
+          in: query
+          description: 'Critère de tri des produits (views ou date)'
+          required: false
+          schema:
+            type: string
+            enum:
+              - views
+              - date
+      responses:
+        '200':
+          description: 'Fetches user products'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties: { id: { type: integer }, name: { type: string }, description: { type: string }, published_date: { type: string }, user_id: { type: integer }, views: { type: integer }, picture: { type: string }, ville_id: { type: integer } }
+                  type: object
+  /api/cities:
     get:
       summary: 'Recherche dans la liste des villes'
-      operationId: 0014f0c235fa91f011782d3b517393ea
+      operationId: a0f15af3ba703749030849d863dcb260
       responses:
         '200':
           description: 'Search cities'

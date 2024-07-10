@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}Accueil{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.min.css">
+{% endblock %}
 
 {% block body %}
 <div class="content-wrapper">
@@ -14,12 +17,12 @@
                             <div class="col-lg-10 col-sm-10 col-xs-8">
                                 <ul class="list-inline">
                                     <li>
-                                        <a href="#" class="color-active">
+                                        <a href="#" onclick="showSlider(false); getProductsAndRender()" class="color-active feature-link">
                                             <span class="visible-xs">À la une</span>
                                             <span class="hidden-xs">À la une</span>
                                         </a>
                                     </li>
-                                    <li><a href="#">Autour de moi</a></li>
+                                    <li><a href="#" onclick="getNearbyProducts()" class="feature-link">Autour de moi</a></li>
                                 </ul>
                             </div>
                             <div class="col-lg-2 col-sm-2 col-xs-4">
@@ -28,10 +31,10 @@
                                         Filtrer par <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a onclick="getProductsAndRender('views')"><i
-                                                class="cv cvicon-cv-calender"></i>
+                                        <li><a onclick="showSlider(false); getProductsAndRender('views')"><i
+                                                class="cv cvicon-cv-relevant"></i>
                                             Popularité</a></li>
-                                        <li><a onclick="getProductsAndRender('date')"><i
+                                        <li><a onclick="showSlider(false); getProductsAndRender('date')"><i
                                                 class="cv cvicon-cv-calender"></i>
                                             Récent</a></li>
                                     </ul>
@@ -39,6 +42,13 @@
                                 <div class="clearfix"></div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Slider Container -->
+                    <div id="radius-slider-container" style="display: none; flex-direction: row; padding-top: 0;" class="cb-header">
+                        <label style="margin: 0 15px 0 0;" for="radius-slider">Sélectionnez la distance (km):</label>
+                        <input id="radius-slider" type="text" data-slider-min="1" data-slider-max="500" data-slider-step="1" data-slider-value="10"/>
+                        <span style="margin-left: 10px" id="slider-value">10 km</span>
                     </div>
 
                     <div class="cb-content">
@@ -54,42 +64,92 @@
 
 {% endblock %}
 
-
 {% block javascript %}
-    <script type="text/javascript">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/bootstrap-slider.min.js"></script>
+<script type="text/javascript">
+    let latitude, longitude;
 
-        function getProductsAndRender(option = ''){
-            $.ajax({
-                url: "/api/products" + '?sort=' + option,
-            }).done(function(result) {
-                $('#articlelist').empty();
-                for(let i = 0; i < result.length; i++){
-                    renderProduct(result[i])
-                }
-            });
+    function showSlider(show) {
+        if (show) {
+            $('#radius-slider-container').css('display', 'flex');
+        } else {
+            $('#radius-slider-container').hide();
+        }
+    }
+
+    function getProductsAndRender(option = '', latitude = null, longitude = null, radius = null) {
+        let url = "/api/products";
+        if (option === 'nearby') {
+            url += `?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
+        } else {
+            url += `?sort=${option}`;
         }
 
-        function renderProduct($product){
-             $('<div class="col-lg-4 col-sm-6 articleitem" id="article-pattern">' +
-                '                                <div class="b-article">' +
-                '                                    <div class="v-img">' +
-                '                                        <a href="/product/'+ $product.id + '">' +
-                '                                            <img src="/storage/'+ $product.picture +'" alt=""></a>' +
-                '                                    </div>' +
-                '                                    <div class="v-desc">' +
-                '                                        <a href="/product/'+ $product.id + '">'+ $product.name+'</a>' +
-                '                                    </div>' +
-                '                                    <p>'+ $product.description.slice(0, 20) + '...</p>' +
-                '                                    <div class="v-views">' +
-                '                                        '+$product.views+' vues' +
-                '                                    </div>' +
-                '                                </div>' +
-                '</div>')
-             .appendTo($('#articlelist'));
-        }
-
-        $( document ).ready(function() {
-            getProductsAndRender();
+        $.ajax({
+            url: url,
+        }).done(function(result) {
+            $('#articlelist').empty();
+            console.log(result);
+            for(let i = 0; i < result.length; i++){
+                renderProduct(result[i]);
+            }
         });
-    </script>
+    }
+
+    function renderProduct($product){
+        $('<div class="col-lg-4 col-sm-6 articleitem" id="article-pattern">' +
+            ' <div class="b-article">' +
+            '   <div class="v-img">' +
+            '     <a href="/product/'+ $product.id + '">' +
+            '       <img src="/storage/'+ $product.picture +'" alt=""></a>' +
+            '   </div>' +
+            '   <div class="v-desc">' +
+            '     <a href="/product/'+ $product.id + '">'+ $product.name+'</a>' +
+            '   </div>' +
+            '   <p>'+ $product.description.slice(0, 20) + '...</p>' +
+            '   <div class="v-views">' +
+            '     '+$product.views+' vues' +
+            '   </div>' +
+            ' </div>' +
+            '</div>')
+            .appendTo($('#articlelist'));
+    }
+
+    function getNearbyProducts() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
+                showSlider(true);
+            }, function(error) {
+                alert("Erreur de géolocalisation : " + error.message);
+            });
+        } else {
+            alert("La géolocalisation n'est pas supportée par votre navigateur.");
+        }
+    }
+
+    $(document).ready(function() {
+        getProductsAndRender();
+
+        // Initialiser le slider
+        $('#radius-slider').slider({
+            formatter: function(value) {
+                return value + ' km';
+            }
+        });
+
+        $('#radius-slider').on('change', function(event) {
+            $('#slider-value').text(event.value.newValue + ' km');
+            if (latitude && longitude) {
+                getProductsAndRender('nearby', latitude, longitude, event.value.newValue);
+            }
+        });
+
+        $('.feature-link').click(function() {
+            $('.feature-link').removeClass('color-active');
+            $(this).addClass('color-active');
+        });
+    });
+</script>
 {% endblock %}

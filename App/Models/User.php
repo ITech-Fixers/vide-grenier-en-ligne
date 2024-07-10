@@ -54,18 +54,17 @@ class User extends Model {
     /**
      * Récupère un utilisateur par son id
      * @access public
+     * @param int $id
      * @return array|false
-     * @throws Exception
      */
-    public static function login(): false|array
+    public static function getById(int $id): false|array
     {
         $db = static::getDB();
 
-        $stmt = $db->prepare('SELECT * FROM articles WHERE articles.id = ? LIMIT 1');
-
+        $stmt = $db->prepare('SELECT * FROM users WHERE id = ? LIMIT 1');
         $stmt->execute([$id]);
 
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
@@ -108,5 +107,24 @@ class User extends Model {
         $db = static::getDB();
         $stmt = $db->prepare('DELETE FROM user_tokens WHERE token = ?');
         $stmt->execute([$token]);
+    }
+
+    /**
+     * Récupère un utilisateur par un id d'article
+     * @access public
+     * @param int $articleId
+     * @return array|false
+     */
+    public static function getByArticle(int $articleId): false|array
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT users.id, users.username, users.email FROM users
+            INNER JOIN articles ON users.id = articles.user_id
+            WHERE articles.id = ?');
+        $stmt->execute([$articleId]);
+
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 }

@@ -4,7 +4,8 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "zircote/swagger-php": "^4.10",
-        "doctrine/annotations": "^2.0"
+        "doctrine/annotations": "^2.0",
+        "phpmailer/phpmailer": "^6.9"
     },
     "autoload": {
         "psr-4": {
