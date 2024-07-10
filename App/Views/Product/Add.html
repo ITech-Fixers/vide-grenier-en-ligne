@@ -8,15 +8,29 @@
     <!-- channel -->
     <div class="container-fluid add-header">
         <div class="row">
-            <h1>
-                Que souhaitez-vous donner ?
-            </h1>
+            {% if update %}
+                <h1>
+                    Modifier un article : {{ article.name }}
+                </h1>
+                {% if article.is_donated == 1 %}
+                    <div class="alert alert-warning" role="alert">
+                        Cet article a été donné.
+                    </div>
+                {% elseif article.is_activated == 0 and article.is_donated == 0 %}
+                    <div class="alert alert-warning" role="alert">
+                        Cet article est désactivé.
+                    </div>
+                {% endif %}
+            {% else %}
+                <h1>
+                    Que souhaitez-vous donner ?
+                </h1>
+            {% endif %}
         </div>
     </div>
     <!-- ///channel -->
-
     <div class="container mt-30">
-        <form action="" method="post" enctype="multipart/form-data">
+        <form action="{% if update %}/product/update/{{ article.article_id }}{% endif %}" method="post" enctype="multipart/form-data">
             <div class="row" style="display: flex; justify-content: center;">
                 <div class="col-lg-6">
                     <div class="u-form">
@@ -25,39 +39,103 @@
                                 <div class="form-group">
                                     <label for="e1">Titre</label>
                                     <input type="text" name="name" class="form-control" id="e1"
-                                           placeholder="Jeu de cartes (rare)" required>
+                                           placeholder="Jeu de cartes (rare)" required
+                                             value="{{ article.name ?? '' }}">
                                 </div>
                             </div>
+
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label for="e2">Description</label>
-                                    <textarea class="form-control" name="description" id="e2" rows="3" required></textarea>
+                                    <textarea class="form-control" name="description" id="e2" rows="3" required>{{ article.description ?? '' }}</textarea>
                                 </div>
                             </div>
 
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label for="e2">Ville</label>
-                                    <input class="form-control cityAutoComplete" type="text" autocomplete="off" required/>
-                                    <input type="hidden" name="city_id" id="city_id"/>
+                                    <input class="form-control cityAutoComplete" type="text" autocomplete="off" required value="{{ article.ville_nom_reel ?? '' }}"/>
+                                    <input type="hidden" name="city_id" id="city_id" value="{{ article.ville_id ?? '' }}"/>
                                 </div>
                             </div>
 
-                            <div class="col-lg-12">
-                                <div class="form-group">
-                                    <label for="e3">Image</label>
-                                    <input type="file" class="form-control" name="picture" id="e3" rows="3" required/>
+                            {% if update == false %}
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="e3">Image</label>
+                                        <input type="file" class="form-control" name="picture" id="e3" rows="3" required/>
+                                    </div>
                                 </div>
-                            </div>
+                            {% else %}
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="e3">Image</label>
+                                        <img src="{{ ('/storage/' ~ article.picture) }}" style="width: 100%; height: auto;"/>
+                                    </div>
+                                </div>
+                            {% endif %}
+
                         </div>
                     </div>
-
+                    {% if update and article.is_donated == 0 %}
+                        <div class="u-area mt-small" style="display: flex; justify-content: center; padding: 0">
+                            <a href="/product/give/{{ article.article_id }}" class="btn btn-secondary u-btn-alt">J'ai donné cet article</a>
+                        </div>
+                    {% endif %}
                     <div class="u-area mt-small">
-                        <button name="submit" class="btn btn-primary u-btn">Valider</button>
+                        {% if update %}
+                            <button name="submit" class="btn btn-primary u-btn">Modifier</button>
+                            {% if article.is_activated == 1 %}
+                                <button type="button" class="btn btn-primary u-btn btn-lg" data-toggle="modal" data-target="#myModal">
+                                    Désactiver
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">Désactiver l'article</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                Êtes-vous sûr de vouloir désactiver cet article ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="/product/deactivate/{{ article.article_id }}" class="btn btn-primary u-btn">Désactiver</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal -->
+                            {% else %}
+                                <button type="button" class="btn btn-primary u-btn btn-lg" data-toggle="modal" data-target="#myModal2">
+                                    Réactiver
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel2">Réactiver l'article</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                Êtes-vous sûr de vouloir réactiver cet article ?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="/product/activate/{{ article.article_id }}" class="btn btn-primary u-btn">Réactiver</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Modal -->
+                            {% endif %}
+                        {% else %}
+                            <button name="submit" class="btn btn-primary u-btn">Valider</button>
+                        {% endif %}
                     </div>
                     <div class="u-terms">
-                        <p>En soumettant votre article vous acceptez les <a href="#">conditions générales</a> de Vide Grenier en
-                            ligne.</p>
+                        <p>En soumettant votre article, vous acceptez les <a href="#">conditions générales</a> de Vide Grenier en ligne.</p>
                     </div>
                 </div>
             </div>
