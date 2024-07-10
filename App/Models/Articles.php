@@ -22,7 +22,7 @@ class Articles extends Model {
     {
         $db = static::getDB();
 
-        $query = 'SELECT * FROM articles ';
+        $query = 'SELECT * FROM articles WHERE articles.is_activated = 1 AND articles.is_donated = 0';
 
         switch ($filter){
             case 'views':
@@ -42,6 +42,7 @@ class Articles extends Model {
 
     /**
      * Récupère les articles à proximité
+     * Note : La formule de calcul de distance est basée sur la formule de Haversine
      *
      * @access public
      * @param float $latitude
@@ -63,6 +64,7 @@ class Articles extends Model {
               )) AS distance 
               FROM articles 
               JOIN villes_france ON articles.ville_id = villes_france.ville_id 
+              WHERE articles.is_activated = 1 AND articles.is_donated = 0
               HAVING distance < :radius 
               ORDER BY distance ASC';
 
@@ -90,7 +92,8 @@ class Articles extends Model {
             SELECT articles.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
             FROM articles
             INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
-            WHERE articles.name LIKE :search OR articles.description LIKE :search');
+            WHERE (articles.name LIKE :search OR articles.description LIKE :search)
+              AND articles.is_activated = 1 AND articles.is_donated = 0');
 
         $stmt->bindValue(':search', "%$search%", \PDO::PARAM_STR);
         $stmt->execute();
@@ -131,13 +134,38 @@ class Articles extends Model {
     }
 
     /**
+     * Récupère un article activé par son id
+     *
+     * @access public
+     * @param $id
+     * @return array|false
+     */
+    public static function getByIdActivated($id): array|false
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('
+            SELECT articles.id AS article_id, articles.*, users.id AS user_id, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
+            FROM articles
+            INNER JOIN users ON articles.user_id = users.id
+            INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
+            WHERE articles.id = ? 
+              AND articles.is_activated = 1 AND articles.is_donated = 0
+            LIMIT 1');
+
+        $stmt->execute([$id]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupère un article par son id
      *
      * @access public
      * @param $id
      * @return array|false
      */
-    public static function getOne($id): array|false
+    public static function getById($id): array|false
     {
         $db = static::getDB();
 
@@ -193,27 +221,6 @@ class Articles extends Model {
     }
 
     /**
-     * Récupère les articles d'un utilisateur
-     *
-     * @access public
-     * @param $id
-     * @return array|false
-     */
-    public static function getByUser($id): false|array
-    {
-        $db = static::getDB();
-
-        $stmt = $db->prepare('
-            SELECT *, articles.id as id FROM articles
-            LEFT JOIN users ON articles.user_id = users.id
-            WHERE articles.user_id = ?');
-
-        $stmt->execute([$id]);
-
-        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
-    }
-
-    /**
      * Récupère les articles suggérés
      *
      * @access public
@@ -227,13 +234,13 @@ class Articles extends Model {
         $stmt = $db->prepare('
             SELECT *, articles.id as id FROM articles
             INNER JOIN users ON articles.user_id = users.id
+            WHERE articles.is_activated = 1 AND articles.is_donated = 0
             ORDER BY published_date DESC LIMIT 10');
 
         $stmt->execute();
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-
 
     /**
      * Sauvegarde un article
@@ -262,6 +269,76 @@ class Articles extends Model {
     }
 
     /**
+     * Met à jour un article
+     *
+     * @access public
+     * @param int $id
+     * @param array $data
+     * @return void
+     */
+    public static function update(int $id, array $data): void
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('UPDATE articles SET name = :name, description = :description, ville_id = :ville_id WHERE id = :id');
+
+        $stmt->bindParam(':name', $data['name']);
+        $stmt->bindParam(':description', $data['description']);
+        $stmt->bindParam(':ville_id', $data['city_id']);
+        $stmt->bindParam(':id', $id);
+
+        $stmt->execute();
+    }
+
+    /**
+     * Marque un article comme donné
+     *
+     * @access public
+     * @param $id
+     * @return void
+     */
+    public static function give($id): void
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('UPDATE articles SET is_donated = 1 WHERE id = ?');
+
+        $stmt->execute([$id]);
+    }
+
+    /**
+     * Active un article
+     *
+     * @access public
+     * @param $id
+     * @return void
+     */
+    public static function activate($id): void
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('UPDATE articles SET is_activated = 1, is_donated = 0 WHERE id = ?');
+
+        $stmt->execute([$id]);
+    }
+
+    /**
+     * Désactive un article
+     *
+     * @access public
+     * @param $id
+     * @return void
+     */
+    public static function deactivate($id): void
+    {
+        $db = static::getDB();
+
+        $stmt = $db->prepare('UPDATE articles SET is_activated = 0 WHERE id = ?');
+
+        $stmt->execute([$id]);
+    }
+
+    /**
      * Attache une image à un article
      *
      * @access public
@@ -278,13 +355,17 @@ class Articles extends Model {
         $stmt->bindParam(':picture', $pictureName);
         $stmt->bindParam(':articleid', $articleId);
 
-
         $stmt->execute();
     }
 
-    public static function donatePerUser()
+    /**
+     * Récupère le nombre d'articles par utilisateur
+     *
+     * @access public
+     * @return array|false
+     */
+    public static function donatePerUser(): array|false
     {
-
         $db = static::getDB();
 
         $stmt = $db->prepare('
@@ -300,7 +381,13 @@ class Articles extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public static function donatePerCity()
+    /**
+     * Récupère le nombre d'articles par ville
+     *
+     * @access public
+     * @return array|false
+     */
+    public static function donatePerCity(): array|false
     {
         $db = static::getDB();
 
@@ -317,14 +404,20 @@ class Articles extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-
-    public static function mostViewed()
+    /**
+     * Récupère les articles les plus vus
+     *
+     * @access public
+     * @return array|false
+     */
+    public static function mostViewed(): array|false
     {
         $db = static::getDB();
 
         $stmt = $db->prepare('
             SELECT a.name, a.views 
             FROM articles a 
+            WHERE a.is_activated = 1 AND a.is_donated = 0
             ORDER BY a.views DESC
             LIMIT 5');
 
@@ -333,13 +426,20 @@ class Articles extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public static function mostContacted()
+    /**
+     * Récupère les articles les plus contactés
+     *
+     * @access public
+     * @return array|false
+     */
+    public static function mostContacted(): array|false
     {
         $db = static::getDB();
 
         $stmt = $db->prepare('
             SELECT a.name, a.contact_count 
             FROM articles a 
+            WHERE a.is_activated = 1 AND a.is_donated = 0
             ORDER BY a.contact_count DESC
             LIMIT 5');
 
@@ -348,27 +448,42 @@ class Articles extends Model {
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public static function getOnlineArticleCount()
+    /**
+     * Récupère les articles en ligne
+     * @access public
+     * @return int
+     */
+    public static function getOnlineArticleCount(): int
     {
         $db = static::getDB();
 
-        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE  is_desactivated = false AND is_donated = false');
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE is_activated = 1 AND is_donated = 0');
         $stmt->execute();
 
         return $stmt->fetchColumn();
     }
 
-    public static function getDonatedArticleCount()
+    /**
+     * Récupère le nombre d'articles donnés
+     * @access public
+     * @return int
+     */
+    public static function getDonatedArticleCount(): int
     {
         $db = static::getDB();
 
-        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE  is_desactivated = false AND is_donated = true');
+        $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE is_activated = 0 AND is_donated = 1');
         $stmt->execute();
 
         return $stmt->fetchColumn();
     }
 
-    public static function getTotalArticleCount()
+    /**
+     * Récupère le nombre total d'articles
+     * @access public
+     * @return int
+     */
+    public static function getTotalArticleCount(): int
     {
         $db = static::getDB();
 
