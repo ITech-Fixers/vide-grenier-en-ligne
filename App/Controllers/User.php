@@ -4,8 +4,7 @@ namespace App\Controllers;
 
 use App\Exception\UserNotFoundException;
 use App\Exception\ValidationException;
-use App\Models\UserRegister;
-use App\Models\Articles;
+use App\Service\Validation\UserRegister;
 use App\Utility\Flash;
 use App\Utility\Hash;
 use Core\Controller;
