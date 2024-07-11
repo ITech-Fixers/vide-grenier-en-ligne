@@ -140,7 +140,6 @@ class User extends Controller
             'is_admin' => $user['is_admin'] == 1
         );
 
-
         if (isset($data['remember-me'])) {
             $this->createRememberMeToken($user['id']);
         }

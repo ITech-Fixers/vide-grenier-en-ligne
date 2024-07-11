@@ -302,7 +302,6 @@ class Api extends Controller
         echo json_encode($statistics);
     }
 
-    //GetUserCount
     /**
      * @OA\Get(
      *     path="/statistics",
