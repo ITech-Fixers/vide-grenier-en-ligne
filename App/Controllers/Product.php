@@ -271,11 +271,11 @@ class Product extends Controller
 
             if (isset($_SESSION['user']) && User::hasArticle($id, $_SESSION['user']['id'])) {
                 $article = Articles::getById($id);
+                $isAuthor = true;
             } else {
                 $article = Articles::getByIdActivated($id);
+                $isAuthor = false;
             }
-
-            $isAuthor = User::hasArticle($id, $_SESSION['user']['id']);
 
             if (empty($article)) {
                 throw new ArticleNotFoundException('L\'article n\'existe pas');

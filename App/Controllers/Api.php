@@ -156,9 +156,8 @@ class Api extends Controller
     public function UserProductsAction(): void
     {
         $query = $_GET['sort'];
-        $user_id = $_SESSION['user']['id'];
-
-        $articles = Articles::getAllByUser($query, $user_id);
+        $user_id = $_GET['user_id'] ?? $_SESSION['user']['id'];
+        $articles = isset($_GET['user_id']) ? Articles::getAllByUserActivated($query, $user_id) : Articles::getAllByUser($query, $user_id);
 
         header('Content-Type: application/json');
         echo json_encode($articles);
