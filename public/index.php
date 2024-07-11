@@ -36,6 +36,7 @@ $router->add('register', ['controller' => 'User', 'action' => 'register']);
 $router->add('logout', ['controller' => 'User', 'action' => 'logout', 'private' => true]);
 $router->add('account', ['controller' => 'User', 'action' => 'account', 'private' => true]);
 $router->add('product', ['controller' => 'Product', 'action' => 'index', 'private' => true]);
+$router->add('product/user/{id:\d+}', ['controller' => 'User', 'action' => 'otherAccount', 'private' => true]);
 $router->add('product/edit/{id:\d+}', ['controller' => 'Product', 'action' => 'showEdit', 'private' => true]);
 $router->add('product/update/{id:\d+}', ['controller' => 'Product', 'action' => 'update', 'private' => true]);
 $router->add('product/activate/{id:\d+}', ['controller' => 'Product', 'action' => 'activate', 'private' => true]);

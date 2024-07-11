@@ -6,32 +6,48 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 
 # Mettre à jour la liste des paquets et installer les dépendances infra
 RUN apt-get update && \
-    apt-get install -y git && \
-    apt-get install -y unzip && \
-    apt-get install -y libzip-dev && \
-    apt-get install -y nano && \
+    apt-get install -y git unzip libzip-dev nano && \
     apt-get clean && \
-    docker-php-ext-install pdo_mysql && \
-    docker-php-ext-install zip && \
-    docker-php-ext-install mysqli && \
-    docker-php-ext-install pdo && \
+    docker-php-ext-install pdo_mysql zip mysqli pdo && \
     rm -rf /var/lib/apt/lists/*
 
 # Installer Composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && php -r "unlink('composer-setup.php');"
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Installer Node.js
 RUN curl -sL https://deb.nodesource.com/setup_21.x | bash -
 RUN apt-get install -y nodejs
 
-# Copier le script entrypoint
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Activer le mod_rewrite pour Apache
+RUN a2enmod rewrite
 
-# Copier les fichiers de l'application dans un répertoire temporaire
-COPY . /var/www/html_src
+# Copier le fichier de configuration d'Apache
+COPY deploy/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Créer le répertoire pour les clefs ssh
+RUN mkdir /root/.ssh
+
+# Ajouter github.com dans les known_hosts
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+# Créer le répertoire de l'application si nécessaire
+RUN mkdir -p /var/www/html
+
+# Copier les fichiers de l'application dans /var/www/html
+COPY . /var/www/html
+
+# Changer le propriétaire des fichiers de l'application
+RUN chown -R www-data:www-data /var/www/html
+
+# Changer les permissions des fichiers de l'application
+RUN chmod -R 755 /var/www/html
+
+# Copy the entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Définir le répertoire de travail
 WORKDIR /var/www/html
@@ -39,5 +55,5 @@ WORKDIR /var/www/html
 # Exposer le port 80
 EXPOSE 80
 
-# Utiliser le script entrypoint comme point d'entrée du conteneur
-ENTRYPOINT ["entrypoint.sh"]
+# Exécuter le script d'entrée
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Exception\UserNotFoundException;
 use App\Exception\ValidationException;
+use App\Models\User as UserModel;
 use App\Service\Validation\UserRegister;
 use App\Utility\Flash;
 use App\Utility\Hash;
@@ -88,12 +89,27 @@ class User extends Controller
     }
 
     /**
-     * Affiche la page du compte
+     * Affiche la page du compte utilisateur
      * @throws Exception
      */
     public function accountAction(): void
     {
         View::renderTemplate('User/account.html');
+    }
+
+    /**
+     * Affiche la page du compte d'un autre utilisateur
+     * @throws Exception
+     */
+    public function otherAccountAction(): void
+    {
+        $id = $this->route_params['id'];
+
+        $user = UserModel::getById($id);
+
+        View::renderTemplate('User/other.html', [
+            'author' => $user
+        ]);
     }
 
     /**
