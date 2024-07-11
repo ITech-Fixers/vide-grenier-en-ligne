@@ -29,6 +29,8 @@ $router = new Core\Router();
 
 // Add the routes
 $router->add('', ['controller' => 'Home', 'action' => 'index']);
+$router->add('privacy', ['controller' => 'Politics', 'action' => 'privacy']);
+$router->add('cookies', ['controller' => 'Politics', 'action' => 'cookies']);
 $router->add('login', ['controller' => 'User', 'action' => 'login']);
 $router->add('register', ['controller' => 'User', 'action' => 'register']);
 $router->add('logout', ['controller' => 'User', 'action' => 'logout', 'private' => true]);
