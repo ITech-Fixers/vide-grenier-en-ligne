@@ -7,7 +7,7 @@ use Core\View;
 use Dotenv\Dotenv;
 use Exception;
 
-class Kernel
+final readonly class Kernel
 {
     private Router $router;
     private Dotenv $dotenv;
