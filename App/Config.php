@@ -39,4 +39,10 @@ class Config
      * @var boolean
      */
     const SHOW_ERRORS = false;
+
+    /**
+     * Base URL
+     * @var string
+     */
+    const BASE_URL = "http://localhost:8080/";
 }

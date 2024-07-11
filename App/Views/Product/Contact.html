@@ -25,13 +25,6 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="form-group">
-                                    <label for="e1">Libellé</label>
-                                    <input type="text" name="libellé" class="form-control" id="e1"
-                                           placeholder="Demande de renseignements" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="form-group">
                                     <label for="e2">Message</label>
                                     <textarea class="form-control" name="message" id="e2" rows="3" required></textarea>
                                 </div>
@@ -52,15 +45,4 @@
         </form>
     </div>
 </div>
-{% endblock %}
-
-{% block javascript %}
-<script>
-    $(document).on('keypress', function(e) {
-        if (e.which === 13) {
-            e.preventDefault();
-            $('#search-form').submit();
-        }
-    });
-</script>
 {% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Config;
 use App\Exception\ArticleNotFoundException;
 use App\Exception\CityNotFoundException;
 use App\Exception\MailerException;
@@ -365,8 +366,10 @@ class Product extends Controller
                 $user['email'],
                 $owner['username'],
                 $owner['email'],
-                $request['libellé'],
-                htmlspecialchars($request['message'])
+                $article[0]['name'],
+                Config::BASE_URL . "storage/". $article[0]['picture'],
+                htmlspecialchars($request['message']),
+                Config::BASE_URL . "product/" . $articleId
             );
 
             Articles::addOneContact($articleId);
@@ -376,7 +379,7 @@ class Product extends Controller
         } catch (ArticleNotFoundException|ValidationException|UserNotFoundException|MailerException $e) {
             Flash::danger($e->getMessage());
             header ("Location: /product/$articleId");
-        } catch (Exception) {
+        } catch (Exception $e) {
             Flash::danger('Une erreur est survenue, veuillez réessayer');
             header ("Location: /product/$articleId");
         }

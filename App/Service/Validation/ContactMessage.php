@@ -4,6 +4,7 @@ namespace App\Service\Validation;
 
 class ContactMessage
 {
+
     /**
      * Valide les données du formulaire de contact
      *
@@ -14,10 +15,6 @@ class ContactMessage
     public static function validate(array $request): array
     {
         $errors = [];
-
-        if (empty($request['libellé'])) {
-            $errors[] = 'Le libellé est obligatoire';
-        }
 
         if (empty($request['message'])) {
             $errors[] = 'Le message est obligatoire';

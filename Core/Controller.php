@@ -43,7 +43,7 @@ abstract class Controller
      * @return void
      * @throws Exception
      */
-    public function __call(string $name, array $args): void
+    public function __call(string $name, array $args)
     {
         $method = $name . 'Action';
 
