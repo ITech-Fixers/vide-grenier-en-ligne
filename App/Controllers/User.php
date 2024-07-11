@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Exception\UserNotFoundException;
@@ -32,7 +34,7 @@ class User extends Controller
     public function loginAction(): void
     {
         try {
-            if (isset($_POST['submit'])){
+            if (isset($_POST['submit'])) {
                 $request = $_POST;
 
                 if (!isset($request['email']) || !isset($request['password'])){
@@ -103,7 +105,7 @@ class User extends Controller
      */
     public function otherAccountAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = (int) $this->route_params['id'];
 
         $user = UserModel::getById($id);
 
@@ -120,7 +122,7 @@ class User extends Controller
     {
         $salt = Hash::generateSalt(32);
 
-        \App\Models\User::createUser([
+        UserModel::createUser([
             "email" => $data['email'],
             "username" => $data['username'],
             "password" => Hash::generate($data['password'], $salt),
@@ -140,7 +142,7 @@ class User extends Controller
             throw new ValidationException('Veuillez renseigner un email');
         }
 
-        $user = \App\Models\User::getByLogin($data['email']);
+        $user = UserModel::getByLogin($data['email']);
 
         if (!$user) {
             throw new UserNotFoundException('Utilisateur non trouvé');
@@ -151,7 +153,7 @@ class User extends Controller
         }
 
         $_SESSION['user'] = array(
-            'id' => $user['id'],
+            'id' => (int) $user['id'],
             'username' => $user['username'],
             'is_admin' => $user['is_admin'] == 1
         );
@@ -172,7 +174,7 @@ class User extends Controller
 
         if (isset($_COOKIE['remember_me'])) {
             $token = $_COOKIE['remember_me'];
-            \App\Models\User::deleteRememberMeToken($token);
+            UserModel::deleteRememberMeToken($token);
 
             setcookie('remember_me', '', time() - 3600, "/");
         }
@@ -202,7 +204,7 @@ class User extends Controller
         $token = bin2hex(random_bytes(32));
         $expiresAt = date('Y-m-d H:i:s', strtotime('+30 days'));
 
-        \App\Models\User::storeRememberMeToken($userId, $token, $expiresAt);
+        UserModel::storeRememberMeToken($userId, $token, $expiresAt);
 
         // Cookie avec une durée de vie de 30 jours
         setcookie('remember_me', $token, time() + (86400 * 30), "/", "", false, true);

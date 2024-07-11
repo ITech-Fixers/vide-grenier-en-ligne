@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Config;
@@ -42,16 +44,16 @@ class Product extends Controller
                     throw new ValidationException(implode('<br>', $errors));
                 }
 
-                $city = Cities::getById($request['city_id']);
+                $city = Cities::getById((int) $request['city_id']);
 
                 if (empty($city)) {
                     throw new CityNotFoundException('La ville sélectionnée n\'existe pas');
                 }
 
-                $request['user_id'] = $_SESSION['user']['id'];
-                $id = Articles::save($request);
+                $request['user_id'] = (int) $_SESSION['user']['id'];
+                $id = (int) Articles::save($request);
 
-                $pictureName = Upload::uploadFile($_FILES['picture'], $id);
+                $pictureName = Upload::uploadFile($_FILES['picture'], $id . '_' . uniqid());
 
                 Articles::attachPicture($id, $pictureName);
 
@@ -77,11 +79,11 @@ class Product extends Controller
      */
     public function showEditAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = (int) $this->route_params['id'];
 
         try {
 
-            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+            if (!User::hasArticle($id, (int) $_SESSION['user']['id'])) {
                 throw new PermissionException("Vous n'êtes pas autorisé à modifier cet article");
             }
 
@@ -111,16 +113,16 @@ class Product extends Controller
      */
     public function giveAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = (int) $this->route_params['id'];
 
         try {
-            $article = Articles::getByIdActivated($id);
+            $article = Articles::getById($id);
 
             if (empty($article)) {
                 throw new ArticleNotFoundException('L\'article n\'existe pas');
             }
 
-            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+            if (!User::hasArticle($id, (int) $_SESSION['user']['id'])) {
                 throw new PermissionException("Vous n'êtes pas autorisé à donner cet article");
             }
 
@@ -145,10 +147,10 @@ class Product extends Controller
      */
     public function updateAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = (int) $this->route_params['id'];
 
         try {
-            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+            if (!User::hasArticle($id, (int) $_SESSION['user']['id'])) {
                 throw new PermissionException("Vous n'êtes pas autorisé à modifier cet article");
             }
 
@@ -165,17 +167,17 @@ class Product extends Controller
                 throw new ValidationException(implode('<br>', $errors));
             }
 
-            $city = Cities::getById($request['city_id']);
+            $city = Cities::getById((int) $request['city_id']);
 
             if (empty($city)) {
                 throw new CityNotFoundException('La ville sélectionnée n\'existe pas');
             }
 
-            $request['user_id'] = $_SESSION['user']['id'];
+            $request['user_id'] = (int) $_SESSION['user']['id'];
             Articles::update($id, $request);
 
             if (!empty($_FILES['picture']['name'])) {
-                $pictureName = Upload::uploadFile($_FILES['picture'], $id);
+                $pictureName = Upload::uploadFile($_FILES['picture'], $id . '_' . uniqid());
                 Articles::attachPicture($id, $pictureName);
             }
 
@@ -198,10 +200,10 @@ class Product extends Controller
      */
     public function activateAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = (int) $this->route_params['id'];
 
         try {
-            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+            if (!User::hasArticle($id, (int) $_SESSION['user']['id'])) {
                 throw new PermissionException("Vous n'êtes pas autorisé à activer cet article");
             }
 
@@ -231,10 +233,10 @@ class Product extends Controller
      */
     public function deactivateAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = (int) $this->route_params['id'];
 
         try {
-            if (!User::hasArticle($id, $_SESSION['user']['id'])) {
+            if (!User::hasArticle($id, (int) $_SESSION['user']['id'])) {
                 throw new PermissionException("Vous n'êtes pas autorisé à désactiver cet article");
             }
 
@@ -264,13 +266,13 @@ class Product extends Controller
      */
     public function showAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = (int) $this->route_params['id'];
 
         try {
             Articles::addOneView($id);
             $suggestions = Articles::getSuggest();
 
-            if (isset($_SESSION['user']) && User::hasArticle($id, $_SESSION['user']['id'])) {
+            if (isset($_SESSION['user']) && User::hasArticle($id, (int) $_SESSION['user']['id'])) {
                 $article = Articles::getById($id);
                 $isAuthor = true;
             } else {
@@ -303,7 +305,7 @@ class Product extends Controller
      */
     public function contactAction(): void
     {
-        $articleId = $this->route_params['id'];
+        $articleId = (int) $this->route_params['id'];
         $article = Articles::getByIdActivated($articleId);
 
         try {
@@ -337,9 +339,10 @@ class Product extends Controller
      */
     public function sendMessageAction(): void
     {
-        $articleId = $this->route_params['id'];
+        $articleId = (int) $this->route_params['id'];
 
         try {
+
             $article = Articles::getByIdActivated($articleId);
 
             if (empty($article)) {
@@ -347,7 +350,7 @@ class Product extends Controller
             }
 
             $owner = User::getByArticle($articleId);
-            $user = User::getById($_SESSION['user']['id']);
+            $user = User::getById((int) $_SESSION['user']['id']);
 
             if (empty($owner) || empty($user)) {
                 empty($owner) ? $message = 'Le détenteur de l\'article n\'existe pas' : $message = 'L\'utilisateur n\'existe pas';

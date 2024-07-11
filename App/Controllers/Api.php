@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Models\Articles;
@@ -157,7 +159,7 @@ class Api extends Controller
     {
         $query = $_GET['sort'];
         $user_id = $_GET['user_id'] ?? $_SESSION['user']['id'];
-        $articles = isset($_GET['user_id']) ? Articles::getAllByUserActivated($query, $user_id) : Articles::getAllByUser($query, $user_id);
+        $articles = isset($_GET['user_id']) ? Articles::getAllByUserActivated($query, (int) $user_id) : Articles::getAllByUser($query,(int)  $user_id);
 
         header('Content-Type: application/json');
         echo json_encode($articles);

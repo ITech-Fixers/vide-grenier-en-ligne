@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
+use Core\Controller;
 use Core\View;
+use Exception;
 
-class Politics extends \Core\Controller
+class Politics extends Controller
 {
 
     /**
