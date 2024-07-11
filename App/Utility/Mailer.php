@@ -24,9 +24,18 @@ class Mailer
      *
      * @throws MailerException
      */
-    public static function send(string $fromName, string $fromMail, string $toName, string $toMail, string $subject, string $content): void
+    public static function send(string $fromName, string $fromMail, string $toName, string $toMail, string $article_title, string $article_image_url, string $message_content, string $article_url): void
     {
         $mail = new PHPMailer(true);
+        $mailTemplate = file_get_contents(__DIR__ . '/../MailTemplate/message_mail.html');
+
+        $mailTemplate = str_replace('{{article_title}}', $article_title, $mailTemplate);
+        $mailTemplate = str_replace('{{image_link}}', $article_image_url, $mailTemplate);
+        $mailTemplate = str_replace('{{message_content}}', $message_content, $mailTemplate);
+        $mailTemplate = str_replace('{{message_author}}', $fromName, $mailTemplate);
+        $mailTemplate = str_replace('{{article_link}}', $article_url, $mailTemplate);
+        $mailTemplate = str_replace('{{mailto}}', $fromMail, $mailTemplate);
+
 
         try {
             $mail->SMTPDebug = SMTP::DEBUG_OFF;
@@ -43,9 +52,10 @@ class Mailer
             $mail->addReplyTo($fromMail, $fromName);
 
             $mail->isHTML(true);
-            $mail->Subject = $subject;
-            $mail->Body = '<div style="background-color: #f8f8f8; padding: 10px; text-align: left;">' . $content . '</div>';
-            $mail->AltBody = $content;
+            $mail->Subject = "[VGEL] Vous avez reçu un message de " . $fromName;
+            $mail->Body = $mailTemplate;
+            $mail->AltBody = $mailTemplate;
+            $mail->CharSet = "UTF-8";
 
             $mail->send();
         } catch (Exception|PHPMailerException $e) {
