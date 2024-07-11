@@ -83,12 +83,13 @@
             '     <a href="/product/'+ $product.id + '">' +
             '       <img src="/storage/'+ $product.picture +'" alt=""></a>' +
             '   </div>' +
-            '   <div class="v-desc">' +
+            '   <div class="v-desc"' + ($product.is_activated == 0 ? 'style="opacity: 0.5;color: red;"' : '') + '>' +
             '     <a href="/product/'+ $product.id + '">'+ $product.name+'</a>' +
             '   </div>' +
             '   <p>'+ $product.description.slice(0, 20) + '...</p>' +
             '   <div class="v-views">' +
             '     '+$product.views+' vues' +
+            '     '+($product.is_activated == 0 ? '<i class="cv cvicon-cv-purchased"></i> désactivé' : '') +
             '   </div>' +
             ' </div>' +
             '</div>'

@@ -17,6 +17,21 @@
   }
 }
 
+.u-btn-alt {
+  margin-top: 10px;
+  background-color: $c-white;
+  color: $c-active;
+  padding: 15px 65px;
+  border: solid 1px $c-active;
+  height: 48px;
+  border-radius: 4px;
+  font-weight: 500;
+  &:hover {
+    color: white;
+    background-color: $c-active;
+  }
+}
+
 .upload-page {
   text-align: center;
   color: $c-light;
@@ -175,6 +190,9 @@
     padding-top: 65px;
     padding-bottom: 20px;
     .u-btn {
+      margin-top: 0;
+    }
+    .u-btn-alt {
       margin-top: 0;
     }
   }

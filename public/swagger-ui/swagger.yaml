@@ -155,10 +155,10 @@ paths:
                 items:
                   properties: { name: { type: string }, contact_count: { type: integer } }
                   type: object
-  /getUserCount:
+  /statistics:
     get:
       summary: "Affiche le nombre d'utilisateurs"
-      operationId: 13e3f3266c4ee595f50dd1646b715f73
+      operationId: 10f5f1406b1e4708940902f1ae76bfce
       responses:
         '200':
           description: 'Fetches statistics'
@@ -167,5 +167,5 @@ paths:
               schema:
                 type: array
                 items:
-                  properties: { user_count: { type: integer } }
+                  properties: { user_count: { type: integer }, online_article_count: { type: integer }, gived_article_count: { type: integer }, total_article_count: { type: integer } }
                   type: object

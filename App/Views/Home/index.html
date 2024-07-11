@@ -47,8 +47,8 @@
                     <!-- Slider Container -->
                     <div id="radius-slider-container" style="display: none; flex-direction: row; padding-top: 0;" class="cb-header">
                         <label style="margin: 0 15px 0 0;" for="radius-slider">Sélectionnez la distance (km):</label>
-                        <input id="radius-slider" type="text" data-slider-min="1" data-slider-max="500" data-slider-step="1" data-slider-value="10"/>
-                        <span style="margin-left: 10px" id="slider-value">10 km</span>
+                        <input id="radius-slider" type="text" data-slider-min="1" data-slider-max="500" data-slider-step="1" data-slider-value="500"/>
+                        <span style="margin-left: 10px" id="slider-value">500 km</span>
                     </div>
 
                     <div class="cb-content">
@@ -146,7 +146,7 @@
         });
 
         $('#radius-slider').on('change', function(event) {
-            $('#slider-value').text(event.value.newValue + ' km');
+            $('#slider-value').text((event.value.newValue * 2) + ' km');
             if (latitude && longitude) {
                 getProductsAndRender('nearby', latitude, longitude, event.value.newValue);
             }

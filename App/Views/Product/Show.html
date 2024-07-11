@@ -44,10 +44,21 @@
                         <h4>Code postal:</h4>
                         <p>{{article.ville_code_postal}}</p>
                     </div>
+                    {% if article.is_donated == 1 %}
+                        <div class="alert alert-warning" role="alert">
+                            Cet article a été donné.
+                        </div>
+                    {% elseif article.is_activated == 0 and article.is_donated == 0 %}
+                        <div class="alert alert-warning" role="alert">
+                            Cet article est désactivé.
+                        </div>
+                    {% endif %}
                     <div class="u-area mt-small">
-
-                    <a name="submit" href="/product/contact/{{article.article_id}}" class="btn btn-primary u-btn">Contacter {{article
-                        .username}}</a>
+                        {% if isAuthor %}
+                            <a href="/product/edit/{{article.article_id}}" class="btn btn-primary u-btn">Modifier</a>
+                        {% else %}
+                            <a name="submit" href="/product/contact/{{article.article_id}}" class="btn btn-primary u-btn">Contacter {{article .username}}</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

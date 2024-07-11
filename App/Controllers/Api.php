@@ -314,7 +314,10 @@ class Api extends Controller
      *             type="array",
      *             @OA\Items(
      *                 type="object",
-     *                 @OA\Property(property="user_count", type="integer")
+     *                 @OA\Property(property="user_count", type="integer"),
+ *                     @OA\Property(property="online_article_count", type="integer"),
+     *                 @OA\Property(property="gived_article_count", type="integer"),
+     *                 @OA\Property(property="total_article_count", type="integer")
      *             )
      *         )
      *     )
@@ -323,10 +326,14 @@ class Api extends Controller
     public function StatisticsAction(): void
     {
         $users = User::getUserCount();
+        $onlineArticles = Articles::getOnlineArticleCount();
+        $givedArticles = Articles::getDonatedArticleCount();
         $totalArticles = Articles::getTotalArticleCount();
 
         $statistics = [
             'user_count' => $users,
+            'online_article_count' => $onlineArticles,
+            'gived_article_count' => $givedArticles,
             'total_article_count' => $totalArticles
         ];
 
