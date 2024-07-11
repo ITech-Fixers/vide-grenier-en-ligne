@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Config;
 use App\Exception\ArticleNotFoundException;
 use App\Exception\CityNotFoundException;
+use App\Exception\FileFormatException;
 use App\Exception\MailerException;
 use App\Exception\PermissionException;
 use App\Exception\UserNotFoundException;
@@ -39,6 +40,9 @@ class Product extends Controller
             try {
                 $request = $_POST;
                 $errors = ArticleAdd::validate($request);
+                $file = $_FILES['picture'];
+
+                Upload::validateFileExtension($file);
 
                 if (!empty($errors)) {
                     throw new ValidationException(implode('<br>', $errors));
@@ -53,14 +57,13 @@ class Product extends Controller
                 $request['user_id'] = (int) $_SESSION['user']['id'];
                 $id = (int) Articles::save($request);
 
-                $pictureName = Upload::uploadFile($_FILES['picture'], $id . '_' . uniqid());
-
+                $pictureName = Upload::uploadFile($file, $id . '_' . uniqid());
                 Articles::attachPicture($id, $pictureName);
 
                 Flash::success('Produit ajouté avec succès');
                 $this->route_params['id'] = $id;
                 $this->showAction();
-            } catch (ValidationException|CityNotFoundException $e) {
+            } catch (ValidationException|CityNotFoundException|FileFormatException $e) {
                 Flash::danger($e->getMessage());
                 View::renderTemplate('Product/Add.html');
             } catch (Exception) {
@@ -175,11 +178,6 @@ class Product extends Controller
 
             $request['user_id'] = (int) $_SESSION['user']['id'];
             Articles::update($id, $request);
-
-            if (!empty($_FILES['picture']['name'])) {
-                $pictureName = Upload::uploadFile($_FILES['picture'], $id . '_' . uniqid());
-                Articles::attachPicture($id, $pictureName);
-            }
 
             Flash::success('Produit modifié avec succès');
             $this->route_params['id'] = $id;
