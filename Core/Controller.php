@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Core;
 
 use App\Models\User;
@@ -8,7 +10,7 @@ use Exception;
 /**
  * Base controller
  *
- * PHP version 7.0
+ * PHP version 8.3
  */
 abstract class Controller
 {
