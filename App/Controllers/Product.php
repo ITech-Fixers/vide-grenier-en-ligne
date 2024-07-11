@@ -364,15 +364,17 @@ class Product extends Controller
                 throw new ValidationException(implode('<br>', $errors));
             }
 
+            $baseURL = $_ENV['BASE_URL'];
+
             Mailer::send(
                 $user['username'],
                 $user['email'],
                 $owner['username'],
                 $owner['email'],
                 $article[0]['name'],
-                Config::BASE_URL . "storage/". $article[0]['picture'],
+                $baseURL . "storage/". $article[0]['picture'],
                 htmlspecialchars($request['message']),
-                Config::BASE_URL . "product/" . $articleId
+                $baseURL . "product/" . $articleId
             );
 
             Articles::addOneContact($articleId);
