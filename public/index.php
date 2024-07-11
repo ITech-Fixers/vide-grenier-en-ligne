@@ -6,6 +6,8 @@
  * PHP version 7.0
  */
 
+use Core\View;
+
 session_start();
 
 /**
@@ -13,14 +15,12 @@ session_start();
  */
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-
 /**
  * Error and Exception handling
  */
 error_reporting(E_ALL);
 set_error_handler('Core\Error::errorHandler');
 set_exception_handler('Core\Error::exceptionHandler');
-
 
 /**
  * Routing
@@ -44,7 +44,7 @@ $router->add('product/give/{id:\d+}', ['controller' => 'Product', 'action' => 'g
 $router->add('product/{id:\d+}', ['controller' => 'Product', 'action' => 'show']);
 $router->add('product/contact/{id:\d+}', ['controller' => 'Product', 'action' => 'contact', 'private' => true]);
 $router->add('product/contact/send/{id:\d+}', ['controller' => 'Product', 'action' => 'sendMessage', 'private' => true]);
-$router->add('admin/statistics', ['controller' => 'Statistics', 'action' => 'index']);
+$router->add('admin/statistics', ['controller' => 'Statistics', 'action' => 'index', 'private' => true]);
 $router->add('{controller}/{action}');
 
 /*
@@ -52,8 +52,20 @@ $router->add('{controller}/{action}');
  */
 try {
     $router->dispatch($_SERVER['QUERY_STRING']);
-} catch(Exception $e){
+} catch (Exception $e) {
     if ($e->getMessage() == 'You must be logged in') {
         header('Location: /login');
+        exit();
+    }
+
+    switch ($e->getCode()) {
+        case 500:
+            View::renderTemplate('500.html');
+            break;
+        case 404:
+            View::renderTemplate('404.html');
+            break;
+        default:
+            throw $e;
     }
 }
