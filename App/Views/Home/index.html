@@ -10,7 +10,6 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-
                 <div class="content-block head-div">
                     <div class="cb-header">
                         <div class="row">
@@ -31,30 +30,23 @@
                                         Filtrer par <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><a onclick="showSlider(false); getProductsAndRender('views')"><i
-                                                class="cv cvicon-cv-relevant"></i>
-                                            Popularité</a></li>
-                                        <li><a onclick="showSlider(false); getProductsAndRender('date')"><i
-                                                class="cv cvicon-cv-calender"></i>
-                                            Récent</a></li>
+                                        <li><a onclick="showSlider(false); getProductsAndRender('views')"><i class="cv cvicon-cv-relevant"></i>Popularité</a></li>
+                                        <li><a onclick="showSlider(false); getProductsAndRender('date')"><i class="cv cvicon-cv-calender"></i>Récent</a></li>
                                     </ul>
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
                         </div>
                     </div>
-
                     <!-- Slider Container -->
                     <div id="radius-slider-container" style="display: none; flex-direction: row; padding-top: 0;" class="cb-header">
                         <label style="margin: 0 15px 0 0;" for="radius-slider">Sélectionnez la distance (km):</label>
                         <input id="radius-slider" type="text" data-slider-min="1" data-slider-max="500" data-slider-step="1" data-slider-value="500"/>
                         <span style="margin-left: 10px" id="slider-value">500 km</span>
                     </div>
-
+                    <!-- Articles Container -->
                     <div class="cb-content">
-                        <div class="row" id="articlelist">
-
-                        </div>
+                        <div class="row" id="articlelist"></div>
                     </div>
                 </div>
             </div>
@@ -145,6 +137,7 @@
             }
         });
 
+        // Mettre à jour la valeur du slider
         $('#radius-slider').on('change', function(event) {
             $('#slider-value').text((event.value.newValue * 2) + ' km');
             if (latitude && longitude) {
@@ -152,6 +145,7 @@
             }
         });
 
+        // Changer la couleur du lien actif
         $('.feature-link').click(function() {
             $('.feature-link').removeClass('color-active');
             $(this).addClass('color-active');
