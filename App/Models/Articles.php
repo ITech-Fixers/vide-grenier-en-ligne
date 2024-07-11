@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -156,6 +157,7 @@ class Articles extends Model {
             WHERE articles.id = ? 
               AND articles.is_activated = 1 AND articles.is_donated = 0
             LIMIT 1');
+
 
         $stmt->execute([$id]);
 

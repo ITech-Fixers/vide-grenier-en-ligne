@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch": "sass --watch style/main.scss public/style/main.css",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vendor\\bin\\phpunit tests\\ApiTest.php"
   },
   "author": "",
   "license": "ISC",

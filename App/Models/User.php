@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -173,10 +174,12 @@ class User extends Model {
      */
     public static function hasArticle(int $articleId, int $userId): bool
     {
+
         $db = static::getDB();
 
         $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE id = ? AND user_id = ?');
         $stmt->execute([$articleId, $userId]);
+
 
         return $stmt->fetchColumn();
     }

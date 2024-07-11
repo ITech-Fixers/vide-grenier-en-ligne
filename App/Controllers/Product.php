@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 use App\Exception\ArticleNotFoundException;
@@ -76,7 +78,7 @@ class Product extends Controller
      */
     public function showEditAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = intval($this->route_params['id']);
 
         try {
 
@@ -110,7 +112,7 @@ class Product extends Controller
      */
     public function giveAction(): void
     {
-        $id = $this->route_params['id'];
+        $id = intval($this->route_params['id']);
 
         try {
             $article = Articles::getByIdActivated($id);
@@ -263,23 +265,31 @@ class Product extends Controller
      */
     public function showAction(): void
     {
-        $id = $this->route_params['id'];
+
+        $id = intval($this->route_params['id']);
 
         try {
             Articles::addOneView($id);
+
             $suggestions = Articles::getSuggest();
+
+
 
             if (isset($_SESSION['user']) && User::hasArticle($id, $_SESSION['user']['id'])) {
                 $article = Articles::getById($id);
+                $isAuthor = true;
             } else {
                 $article = Articles::getByIdActivated($id);
+                $isAuthor = false;
             }
 
-            $isAuthor = User::hasArticle($id, $_SESSION['user']['id']);
+
 
             if (empty($article)) {
                 throw new ArticleNotFoundException('L\'article n\'existe pas');
             }
+
+
 
             View::renderTemplate('Product/Show.html', [
                 'article' => $article[0],
@@ -287,9 +297,12 @@ class Product extends Controller
                 'isAuthor' => $isAuthor
             ]);
         } catch (ArticleNotFoundException $e) {
+
             Flash::danger($e->getMessage());
             header ("Location: /");
-        } catch (Exception) {
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
+            die();
             Flash::danger('Une erreur est survenue, veuillez réessayer');
             header ("Location: /");
         }
