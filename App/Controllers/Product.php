@@ -289,8 +289,8 @@ class Product extends Controller
         } catch (ArticleNotFoundException $e) {
             Flash::danger($e->getMessage());
             header ("Location: /");
-        } catch (Exception $e) {
-            Flash::danger($e->getMessage() . $e->getTraceAsString());
+        } catch (Exception) {
+            Flash::danger('Une erreur est survenue, veuillez réessayer');
             header ("Location: /");
         }
     }
