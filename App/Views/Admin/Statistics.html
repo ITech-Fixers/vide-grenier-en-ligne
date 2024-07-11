@@ -34,7 +34,7 @@
             <div class="card shadow rounded">
                 <div class="card-body">
                     <h5 class="card-title">Nombre d'articles donnés</h5>
-                    <p class="card-text" id="gived">0</p>
+                    <p class="card-text" id="given">0</p>
                 </div>
             </div>
         </div>
@@ -190,7 +190,7 @@
             $('#user').text(data.user_count);
             $('#online').text(data.online_article_count);
             $('#total').text(data.total_article_count);
-            $('#gived').text(data.gived_article_count);
+            $('#given').text(data.given_article_count);
             console.log(data);
         },
         error: function() {

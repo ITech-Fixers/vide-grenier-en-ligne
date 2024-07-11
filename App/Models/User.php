@@ -13,8 +13,13 @@ class User extends Model {
 
     /**
      * Crée un utilisateur
+     *
+     * @access public
+     * @param array $data
+     *
+     * @return false|string
      */
-    public static function createUser($data): false|string
+    public static function createUser(array $data): false|string
     {
         $db = static::getDB();
 
@@ -32,8 +37,10 @@ class User extends Model {
 
     /**
      * Récupère un utilisateur par son email
+     *
      * @access public
      * @param string $login
+     *
      * @return array|false
      */
     public static function getByLogin(string $login): false|array
@@ -53,8 +60,10 @@ class User extends Model {
 
     /**
      * Récupère un utilisateur par son id
+     *
      * @access public
      * @param int $id
+     *
      * @return array|false
      */
     public static function getById(int $id): false|array
@@ -69,10 +78,12 @@ class User extends Model {
 
     /**
      * Stocke un token de "se souvenir de moi" dans la base de données
+     *
      * @access public
      * @param int $userId
      * @param string $token
      * @param string $expiresAt
+     *
      * @return void
      */
     public static function storeRememberMeToken(int $userId, string $token, string $expiresAt): void
@@ -84,8 +95,10 @@ class User extends Model {
 
     /**
      * Récupère un utilisateur par son token de "se souvenir de moi"
+     *
      * @access public
      * @param string $token
+     *
      * @return array|false
      */
     public static function getUserByRememberMeToken(string $token): false|array
@@ -98,8 +111,10 @@ class User extends Model {
 
     /**
      * Supprime un token de "se souvenir de moi" de la base de données
+     *
      * @access public
      * @param string $token
+     *
      * @return void
      */
     public static function deleteRememberMeToken(string $token): void
@@ -111,8 +126,10 @@ class User extends Model {
 
     /**
      * Récupère un utilisateur par un id d'article
+     *
      * @access public
      * @param int $articleId
+     *
      * @return array|false
      */
     public static function getByArticle(int $articleId): false|array
@@ -128,7 +145,14 @@ class User extends Model {
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
-    public static function getUserCount()
+    /**
+     * Récupère le nombre d'utilisateurs
+     *
+     * @access public
+     *
+     * @return int
+     */
+    public static function getUserCount(): int
     {
         $db = static::getDB();
 
@@ -138,6 +162,15 @@ class User extends Model {
         return $stmt->fetchColumn();
     }
 
+    /**
+     * Vérifie si un utilisateur a un article
+     *
+     * @access public
+     * @param int $articleId
+     * @param int $userId
+     *
+     * @return bool
+     */
     public static function hasArticle(int $articleId, int $userId): bool
     {
         $db = static::getDB();

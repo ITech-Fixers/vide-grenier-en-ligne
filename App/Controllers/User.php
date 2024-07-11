@@ -31,7 +31,7 @@ class User extends Controller
     public function loginAction(): void
     {
         try {
-            if(isset($_POST['submit'])){
+            if (isset($_POST['submit'])){
                 $request = $_POST;
 
                 if (!isset($request['email']) || !isset($request['password'])){
@@ -62,7 +62,7 @@ class User extends Controller
     public function registerAction(): void
     {
         try {
-            if(isset($_POST['submit'])){
+            if (isset($_POST['submit'])){
                 $request = $_POST;
                 $errors = UserRegister::validate($request);
 
@@ -96,13 +96,12 @@ class User extends Controller
         View::renderTemplate('User/account.html');
     }
 
-    /*
-     * Fonction privée pour enregistrer un utilisateur
+    /**
+     * Enregistre un utilisateur
+     * @throws Exception
      */
     private function register($data): void
     {
-        // Generate a salt, which will be applied to the during the password
-        // hashing process.
         $salt = Hash::generateSalt(32);
 
         \App\Models\User::createUser([
@@ -114,13 +113,14 @@ class User extends Controller
     }
 
     /**
+     * Connexion d'un utilisateur
      * @throws ValidationException
      * @throws UserNotFoundException
      * @throws RandomException
      */
     private function login($data): void
     {
-        if(!isset($data['email'])){
+        if (!isset($data['email'])){
             throw new ValidationException('Veuillez renseigner un email');
         }
 
@@ -148,11 +148,9 @@ class User extends Controller
 
 
     /**
-     * Logout: Delete cookie and session. Returns true if everything is okay,
-     * otherwise turns false.
+     * Déconnexion d'un utilisateur
      * @access public
      * @return boolean
-     * @since 1.0.2
      */
     public function logoutAction(): bool
     {
@@ -175,13 +173,13 @@ class User extends Controller
         }
 
         session_destroy();
-
         header ("Location: /");
 
         return true;
     }
 
     /**
+     * Crée un token de connexion
      * @throws RandomException
      */
     private function createRememberMeToken(int $userId): void

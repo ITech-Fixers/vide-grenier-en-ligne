@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Exception;
+
 /**
  * Router
  *
@@ -14,23 +16,23 @@ class Router
      * Associative array of routes (the routing table)
      * @var array
      */
-    protected $routes = [];
+    protected array $routes = [];
 
     /**
      * Parameters from the matched route
      * @var array
      */
-    protected $params = [];
+    protected array $params = [];
 
     /**
      * Add a route to the routing table
      *
      * @param string $route  The route URL
-     * @param array  $params Parameters (controller, action, etc.)
+     * @param array $params Parameters (controller, action, etc.)
      *
      * @return void
      */
-    public function add($route, $params = [])
+    public function add(string $route, array $params = []): void
     {
         // Convert the route to a regular expression: escape forward slashes
         $route = preg_replace('/\//', '\\/', $route);
@@ -52,7 +54,7 @@ class Router
      *
      * @return array
      */
-    public function getRoutes()
+    public function getRoutes(): array
     {
         return $this->routes;
     }
@@ -65,7 +67,7 @@ class Router
      *
      * @return boolean  true if a match found, false otherwise
      */
-    public function match($url)
+    public function match(string $url): bool
     {
         foreach ($this->routes as $route => $params) {
             if (preg_match($route, $url, $matches)) {
@@ -89,7 +91,7 @@ class Router
      *
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -101,8 +103,9 @@ class Router
      * @param string $url The route URL
      *
      * @return void
+     * @throws Exception
      */
-    public function dispatch($url)
+    public function dispatch(string $url): void
     {
         $url = $this->removeQueryStringVariables($url);
 
@@ -114,7 +117,7 @@ class Router
             if (class_exists($controller)) {
 
                 if(isset($this->params['private']) && !isset($_SESSION['user']['id'])){
-                    throw new \Exception("You must be logged in");
+                    throw new Exception("You must be logged in");
                 }
 
                 $controller_object = new $controller($this->params);
@@ -126,13 +129,13 @@ class Router
                     $controller_object->$action();
 
                 } else {
-                    throw new \Exception("Method $action in controller $controller cannot be called directly - remove the Action suffix to call this method");
+                    throw new Exception("Method $action in controller $controller cannot be called directly - remove the Action suffix to call this method");
                 }
             } else {
-                throw new \Exception("Controller class $controller not found");
+                throw new Exception("Controller class $controller not found");
             }
         } else {
-            throw new \Exception('No route matched.', 404);
+            throw new Exception('No route matched.', 404);
         }
     }
 
@@ -144,7 +147,7 @@ class Router
      *
      * @return string
      */
-    protected function convertToStudlyCaps($string)
+    protected function convertToStudlyCaps(string $string): string
     {
         return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
     }
@@ -157,7 +160,7 @@ class Router
      *
      * @return string
      */
-    protected function convertToCamelCase($string)
+    protected function convertToCamelCase(string $string): string
     {
         return lcfirst($this->convertToStudlyCaps($string));
     }
@@ -185,12 +188,12 @@ class Router
      *
      * @return string The URL with the query string variables removed
      */
-    protected function removeQueryStringVariables($url)
+    protected function removeQueryStringVariables(string $url): string
     {
         if ($url != '') {
             $parts = explode('&', $url, 2);
 
-            if (strpos($parts[0], '=') === false) {
+            if (!str_contains($parts[0], '=')) {
                 $url = $parts[0];
             } else {
                 $url = '';
@@ -206,7 +209,7 @@ class Router
      *
      * @return string The request URL
      */
-    protected function getNamespace()
+    protected function getNamespace(): string
     {
         $namespace = 'App\Controllers\\';
 

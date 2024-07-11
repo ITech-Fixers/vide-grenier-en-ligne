@@ -4,7 +4,14 @@ namespace App\Service\Validation;
 
 class UserRegister
 {
-    public static function validate($data): array
+    /**
+     * Valide les données du formulaire d'inscription
+     *
+     * @param array $data
+     *
+     * @return array un tableau contenant les erreurs
+     */
+    public static function validate(array $data): array
     {
         $errors = [];
 

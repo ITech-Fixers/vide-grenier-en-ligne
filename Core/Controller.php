@@ -17,7 +17,7 @@ abstract class Controller
      * Parameters from the matched route
      * @var array
      */
-    protected $route_params = [];
+    protected array $route_params = [];
 
     /**
      * Class constructor
@@ -43,7 +43,7 @@ abstract class Controller
      * @return void
      * @throws Exception
      */
-    public function __call($name, $args)
+    public function __call(string $name, array $args): void
     {
         $method = $name . 'Action';
 
@@ -72,10 +72,16 @@ abstract class Controller
      *
      * @return void
      */
-    protected function after()
+    protected function after(): void
     {
     }
 
+    /**
+     * Vérifie si l'utilisateur a coché la case "Se souvenir de moi"
+     * et connecte l'utilisateur automatiquement si c'est le cas
+     *
+     * @return void
+     */
     protected function checkRememberMe(): void
     {
         if (isset($_COOKIE['remember_me']) && !isset($_SESSION['user'])) {

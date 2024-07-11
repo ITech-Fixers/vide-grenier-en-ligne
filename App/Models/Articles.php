@@ -16,6 +16,7 @@ class Articles extends Model {
      *
      * @access public
      * @param string $filter
+     *
      * @return array|false
      */
     public static function getAll(string $filter): false|array
@@ -48,6 +49,7 @@ class Articles extends Model {
      * @param float $latitude
      * @param float $longitude
      * @param float $radius
+     *
      * @return array|false
      */
     public static function getNearby(float $latitude, float $longitude, float $radius): false|array
@@ -82,6 +84,7 @@ class Articles extends Model {
      *
      * @access public
      * @param string $search
+     *
      * @return array|false
      */
     public static function search(string $search): false|array
@@ -137,10 +140,11 @@ class Articles extends Model {
      * Récupère un article activé par son id
      *
      * @access public
-     * @param $id
+     * @param int $id
+     *
      * @return array|false
      */
-    public static function getByIdActivated($id): array|false
+    public static function getByIdActivated(int $id): array|false
     {
         $db = static::getDB();
 
@@ -162,10 +166,11 @@ class Articles extends Model {
      * Récupère un article par son id
      *
      * @access public
-     * @param $id
+     * @param int $id
+     *
      * @return array|false
      */
-    public static function getById($id): array|false
+    public static function getById(int $id): array|false
     {
         $db = static::getDB();
 
@@ -186,10 +191,11 @@ class Articles extends Model {
      * Ajoute une vue à un article
      *
      * @access public
-     * @param $id
+     * @param int $id
+     *
      * @return void
      */
-    public static function addOneView($id): void
+    public static function addOneView(int $id): void
     {
         $db = static::getDB();
 
@@ -205,10 +211,11 @@ class Articles extends Model {
      * Ajoute un contact à un article
      *
      * @access public
-     * @param $id
+     * @param int $id
+     *
      * @return void
      */
-    public static function addOneContact($id): void
+    public static function addOneContact(int $id): void
     {
         $db = static::getDB();
 
@@ -224,6 +231,7 @@ class Articles extends Model {
      * Récupère les articles suggérés
      *
      * @access public
+     *
      * @return array|false
      * @throws Exception
      */
@@ -246,10 +254,11 @@ class Articles extends Model {
      * Sauvegarde un article
      *
      * @access public
-     * @param $data
+     * @param array $data
+     *
      * @return string|boolean
      */
-    public static function save($data): bool|string
+    public static function save(array $data): bool|string
     {
         $db = static::getDB();
 
@@ -274,6 +283,7 @@ class Articles extends Model {
      * @access public
      * @param int $id
      * @param array $data
+     *
      * @return void
      */
     public static function update(int $id, array $data): void
@@ -294,10 +304,11 @@ class Articles extends Model {
      * Marque un article comme donné
      *
      * @access public
-     * @param $id
+     * @param int $id
+     *
      * @return void
      */
-    public static function give($id): void
+    public static function give(int $id): void
     {
         $db = static::getDB();
 
@@ -310,10 +321,11 @@ class Articles extends Model {
      * Active un article
      *
      * @access public
-     * @param $id
+     * @param int $id
+     *
      * @return void
      */
-    public static function activate($id): void
+    public static function activate(int $id): void
     {
         $db = static::getDB();
 
@@ -326,10 +338,11 @@ class Articles extends Model {
      * Désactive un article
      *
      * @access public
-     * @param $id
+     * @param int $id
+     *
      * @return void
      */
-    public static function deactivate($id): void
+    public static function deactivate(int $id): void
     {
         $db = static::getDB();
 
@@ -342,11 +355,12 @@ class Articles extends Model {
      * Attache une image à un article
      *
      * @access public
-     * @param $articleId
-     * @param $pictureName
+     * @param int $articleId
+     * @param string $pictureName
+     *
      * @return void
      */
-    public static function attachPicture($articleId, $pictureName): void
+    public static function attachPicture(int $articleId, string $pictureName): void
     {
         $db = static::getDB();
 
@@ -362,6 +376,7 @@ class Articles extends Model {
      * Récupère le nombre d'articles par utilisateur
      *
      * @access public
+     *
      * @return array|false
      */
     public static function donatePerUser(): array|false
@@ -385,6 +400,7 @@ class Articles extends Model {
      * Récupère le nombre d'articles par ville
      *
      * @access public
+     *
      * @return array|false
      */
     public static function donatePerCity(): array|false
@@ -408,6 +424,7 @@ class Articles extends Model {
      * Récupère les articles les plus vus
      *
      * @access public
+     *
      * @return array|false
      */
     public static function mostViewed(): array|false
@@ -430,6 +447,7 @@ class Articles extends Model {
      * Récupère les articles les plus contactés
      *
      * @access public
+     *
      * @return array|false
      */
     public static function mostContacted(): array|false
@@ -450,7 +468,9 @@ class Articles extends Model {
 
     /**
      * Récupère les articles en ligne
+     *
      * @access public
+     *
      * @return int
      */
     public static function getOnlineArticleCount(): int
@@ -465,7 +485,9 @@ class Articles extends Model {
 
     /**
      * Récupère le nombre d'articles donnés
+     *
      * @access public
+     *
      * @return int
      */
     public static function getDonatedArticleCount(): int
@@ -480,7 +502,9 @@ class Articles extends Model {
 
     /**
      * Récupère le nombre total d'articles
+     *
      * @access public
+     *
      * @return int
      */
     public static function getTotalArticleCount(): int
