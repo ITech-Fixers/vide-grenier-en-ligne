@@ -13,6 +13,20 @@ Ce Readme.md est à destination des futurs repreneurs du site-web Vide Grenier e
 1. Lancez la commande `npm install` pour installer node-sass
 2. Lancez la commande `npm run watch` pour compiler les fichiers SCSS
 
+## Variables d'environnement
+
+Il est nécessaire de créer un fichier `.env` à la racine du projet (cf. `.env.example`), et de renseigner les variables suivantes :
+
+```dotenv
+DB_HOST=localhost
+DB_NAME=vgel
+DB_USER=root
+DB_PASSWORD=root
+
+SHOW_ERRORS=true
+BASE_URL=http://localhost/
+```
+
 ## Routing
 
 Le [Router](Core/Router.php) traduit les URLs. 
