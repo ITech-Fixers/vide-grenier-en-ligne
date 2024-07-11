@@ -13,16 +13,17 @@ class Cities extends Model {
      * Cherche une ville par son nom
      *
      * @access public
-     * @param $str
+     * @param string $cityName
+     *
      * @return false|array
      */
-    public static function search($str): false|array
+    public static function search(string $cityName): false|array
     {
         $db = static::getDB();
 
         $stmt = $db->prepare('SELECT ville_id, ville_nom_reel FROM villes_france WHERE ville_nom_reel LIKE :query');
 
-        $query = $str . '%';
+        $query = $cityName . '%';
 
         $stmt->bindParam(':query', $query);
 
@@ -36,6 +37,7 @@ class Cities extends Model {
      *
      * @access public
      * @param int $id
+     *
      * @return false|array
      */
     public static function getById(int $id): false|array

@@ -2,8 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\Articles;
-use \Core\View;
+use Core\View;
 use Exception;
 
 /**
@@ -16,11 +15,10 @@ class Home extends \Core\Controller
      * Affiche la page d'accueil
      *
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
-    public function indexAction()
+    public function indexAction(): void
     {
-
-        View::renderTemplate('Home/index.html', []);
+        View::renderTemplate('Home/index.html');
     }
 }

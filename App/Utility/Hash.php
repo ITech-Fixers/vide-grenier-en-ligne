@@ -9,15 +9,26 @@ class Hash {
 
     /**
      * Génère et retourne un hash
+     *
+     * @param string $string
+     * @param string $salt
+     *
+     * @return string
      */
-    public static function generate($string, $salt = "") {
+    public static function generate(string $string, string $salt = ""): string
+    {
         return(hash("sha256", $string . $salt));
     }
 
     /**
      * Génère et retourne un salt
+     *
+     * @param int $length
+     *
+     * @return string
      */
-    public static function generateSalt($length) {
+    public static function generateSalt(int $length): string
+    {
         $salt = "";
         $charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\][{}\'\";:?.>,<!@#$%^&*()-_=+|";
         for ($i = 0; $i < $length; $i++) {
@@ -28,8 +39,11 @@ class Hash {
 
     /**
      * Génère et retourne un UID
+     *
+     * @return string
      */
-    public static function generateUnique() {
+    public static function generateUnique(): string
+    {
         return(self::generate(uniqid()));
     }
 

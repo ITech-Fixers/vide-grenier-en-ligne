@@ -325,15 +325,15 @@ class Api extends Controller
      */
     public function StatisticsAction(): void
     {
-        $users = User::getUserCount();
+        $usersCount = User::getUserCount();
         $onlineArticles = Articles::getOnlineArticleCount();
-        $givedArticles = Articles::getDonatedArticleCount();
+        $givenArticles = Articles::getDonatedArticleCount();
         $totalArticles = Articles::getTotalArticleCount();
 
         $statistics = [
-            'user_count' => $users,
+            'user_count' => $usersCount,
             'online_article_count' => $onlineArticles,
-            'gived_article_count' => $givedArticles,
+            'given_article_count' => $givenArticles,
             'total_article_count' => $totalArticles
         ];
 

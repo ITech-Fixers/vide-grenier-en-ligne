@@ -2,10 +2,21 @@
 
 namespace App\Utility;
 
+use Exception;
+
 class Upload {
 
-
-    public static function uploadFile($file, $fileName)
+    /**
+     * Charger un fichier
+     *
+     * @param array $file
+     * @param string $fileName
+     *
+     * @return string
+     *
+     * @throws Exception
+     */
+    public static function uploadFile(array $file, string $fileName): string
     {
         $currentDirectory = getcwd();
         $uploadDirectory = "/storage/";
@@ -23,11 +34,11 @@ class Upload {
         $uploadPath = $currentDirectory . $uploadDirectory . $pictureName;
 
         if (!in_array($fileExtension, $fileExtensionsAllowed)) {
-            throw new \Exception("This file extension is not allowed. Please upload a JPEG or PNG file");
+            throw new Exception("This file extension is not allowed. Please upload a JPEG or PNG file");
         }
 
         if ($fileSize > 4000000) {
-            throw new \Exception("File exceeds maximum size (4MB)");
+            throw new Exception("File exceeds maximum size (4MB)");
         }
 
         $didUpload = move_uploaded_file($fileTmpName, $uploadPath);
@@ -35,7 +46,7 @@ class Upload {
         if ($didUpload) {
             return $pictureName;
         } else {
-            throw new \Exception("An error occurred. Please contact the administrator.");
+            throw new Exception("An error occurred. Please contact the administrator.");
         }
     }
 }
