@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Core\Model;
@@ -178,6 +180,6 @@ class User extends Model {
         $stmt = $db->prepare('SELECT COUNT(*) FROM articles WHERE id = ? AND user_id = ?');
         $stmt->execute([$articleId, $userId]);
 
-        return $stmt->fetchColumn();
+        return $stmt->fetchColumn() > 0;
     }
 }

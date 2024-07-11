@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Utility;
 
 use App\Exception\MailerException;
@@ -17,9 +19,10 @@ class Mailer
      * @param string $fromMail
      * @param string $toName
      * @param string $toMail
-     * @param string $subject
-     * @param string $content
-     *
+     * @param string $article_title
+     * @param string $article_image_url
+     * @param string $message_content
+     * @param string $article_url
      * @return void
      *
      * @throws MailerException
