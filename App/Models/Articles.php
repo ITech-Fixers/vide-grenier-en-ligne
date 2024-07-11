@@ -183,7 +183,7 @@ class Articles extends Model {
         $db = static::getDB();
 
         $stmt = $db->prepare('
-            SELECT articles.id AS article_id, articles.*, users.id AS user_id, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
+            SELECT articles.id AS article_id, articles.*, users.id AS user_id, users.username, users.email, users.is_admin, villes_france.ville_nom_reel, villes_france.ville_code_postal
             FROM articles
             INNER JOIN users ON articles.user_id = users.id
             INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
@@ -209,7 +209,7 @@ class Articles extends Model {
         $db = static::getDB();
 
         $stmt = $db->prepare('
-            SELECT articles.id AS article_id, articles.*, users.id AS user_id, users.*, villes_france.ville_nom_reel, villes_france.ville_code_postal
+            SELECT articles.id AS article_id, articles.*, users.id AS user_id, users.username, users.email, users.is_admin, villes_france.ville_nom_reel, villes_france.ville_code_postal
             FROM articles
             INNER JOIN users ON articles.user_id = users.id
             INNER JOIN villes_france ON articles.ville_id = villes_france.ville_id
