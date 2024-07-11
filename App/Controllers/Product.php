@@ -367,9 +367,9 @@ class Product extends Controller
                 $owner['username'],
                 $owner['email'],
                 $article[0]['name'],
-                Config::URL . "storage/". $article[0]['picture'],
+                Config::BASE_URL . "storage/". $article[0]['picture'],
                 htmlspecialchars($request['message']),
-                Config::URL . "product/" . $articleId
+                Config::BASE_URL . "product/" . $articleId
             );
 
             Articles::addOneContact($articleId);
@@ -380,8 +380,6 @@ class Product extends Controller
             Flash::danger($e->getMessage());
             header ("Location: /product/$articleId");
         } catch (Exception $e) {
-            var_dump($e->getMessage());
-            die();
             Flash::danger('Une erreur est survenue, veuillez réessayer');
             header ("Location: /product/$articleId");
         }

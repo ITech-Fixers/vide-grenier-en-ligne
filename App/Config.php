@@ -38,6 +38,11 @@ class Config
      * Show or hide error messages on screen
      * @var boolean
      */
-    const SHOW_ERRORS = true;
-    const URL = "http://localhost:8080/";
+    const SHOW_ERRORS = false;
+
+    /**
+     * Base URL
+     * @var string
+     */
+    const BASE_URL = "http://localhost:8080/";
 }
