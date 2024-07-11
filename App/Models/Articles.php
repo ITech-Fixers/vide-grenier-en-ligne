@@ -137,6 +137,38 @@ class Articles extends Model {
     }
 
     /**
+     * Récupère tous les articles d'un utilisateur activés
+     *
+     * @access public
+     * @param string $filter
+     * @param int $user_id
+     *
+     * @return array|false
+     */
+    public static function getAllByUserActivated(string $filter, int $user_id): array|false
+    {
+        $db = static::getDB();
+
+        $query = 'SELECT * FROM articles WHERE user_id = ? AND is_activated = 1 AND is_donated = 0';
+
+        switch ($filter){
+            case 'views':
+                $query .= ' ORDER BY articles.views DESC';
+                break;
+            case 'date':
+                $query .= ' ORDER BY articles.published_date DESC';
+                break;
+            case '':
+                break;
+        }
+
+        $stmt = $db->prepare($query);
+        $stmt->execute([$user_id]);
+
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Récupère un article activé par son id
      *
      * @access public
