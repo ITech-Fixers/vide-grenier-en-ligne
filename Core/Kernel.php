@@ -1,9 +1,7 @@
 <?php
 
-namespace App;
+namespace Core;
 
-use Core\Router;
-use Core\View;
 use Dotenv\Dotenv;
 use Exception;
 
